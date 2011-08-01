@@ -1,0 +1,30 @@
+body {
+margin: 10px;
+}
+
+.good { background-color: #CAFF70; }
+.bad { background-color: #FF7256; }
+.loading {font-style: italic ; }
+
+h2 { clear: both; }
+
+#fig {
+        width: 630px;
+        min-height: 425px;
+        float: left;
+}
+
+td, th { font-family: monospace; padding: 0 1ex 0 1ex ;}
+
+#route td:nth-child(2) { text-align: right; }
+#route td:nth-child(3) { text-align: right; }
+#route td:nth-child(6) { text-align: center; }
+#route td:nth-child(7) { text-align: center; }
+
+#neighbour td:nth-child(2) { text-align: center; }
+#neighbour td:nth-child(3) { text-align: center; }
+#neighbour td:nth-child(4) { text-align: right; }
+#neighbour td:nth-child(5) { text-align: right; }
+#neighbour td:nth-child(6) { text-align: right; }
+
+#xroute td:nth-child(2) { text-align: right; }

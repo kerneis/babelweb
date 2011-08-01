@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+        "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>Babel el-Web</title>
+    <script type="text/javascript" src="/js/d3/d3.min.js"></script>
+    <script type="text/javascript" src="/js/d3/d3.geom.min.js"></script>
+    <script type="text/javascript" src="/js/d3/d3.layout.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="/css/style.css"/>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+    <meta http-equiv="Content-Script-Type" content="text/javascript">
+
+
+  </head>
+  <body>
+      <h1>Bab el-Web</h1>
+      <h2>Routers</h2>
+      <div id="fig"></div>
+      <script type="text/javascript" src="/js/babelweb.js"></script>
+    <h3>Configuration</h3>
+    <p>
+    <input type="checkbox" id="show_all" onClick="redisplay();" />
+    <label for="show_all">Show uninstalled routes.</label><br />
+    <input type="button" value="Randomize" onClick="routers={};recompute_network();redisplay();" />
+    </p>
+    <p>Updates : <span id="updates">0</span>.
+       State: <span id="state" class="bad">disconnected</span>.</p>
+
+<h2>Routes</h2>
+<table id="route" frame="border" rules="all">
+    <thead>
+        <th>prefix</th>
+        <th>metric</th>
+        <th>refmetric</th>
+        <th>id</th>
+        <th>via</th>
+        <th>if</th>
+        <th>installed</th>
+    </thead>
+    <tbody>
+        <tr class="loading">
+           <td colspan="0" align = "center">loading</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Neighbours</h2>
+<table id="neighbour" frame="border" rules="all">
+    <thead>
+    <th>address</th>
+    <th>if</th>
+    <th>reach</th>
+    <th>rxcost</th>
+    <th>txcost</th>
+    <th>cost</th>
+    </thead>
+    <tbody>
+        <tr class="loading">
+           <td colspan="0" align = "center">loading</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Exported routes</h2>
+<table id="xroute" frame="border" rules="all">
+    <thead>
+        <th>prefix</th>
+        <th>metric</th>
+    </thead>
+    <tbody>
+        <tr class="loading">
+           <td colspan="0" align = "center">loading</td>
+        </tr>
+    </tbody>
+</table>
+<h2>How to get Bab el-Web?</h2>
+<pre>  git clone git://kerneis.info/git/babelweb.git</pre>
+
+<hr>
+<p>Bab el-Web is proudly brought to you by <a
+    href="http://www.pps.jussieu.fr/~kerneis/">Gabriel Kerneis</a>.
+It is inspired by BabelTool, a Java software by <a
+    href="http://www.pps.jussieu.fr/~pejman">Pejman Attar</a> and Yoann
+Canal.  Many thanks to Didier Gillet who coined the name.
+</p>
+  </body>
+</html>
