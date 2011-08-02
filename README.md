@@ -58,7 +58,7 @@ http://localhost:8080/
 Options
 -------
 
-See the man page for a list a options (also available in the doc/ directory):
+See the man page for a list of options (also available in the doc/ directory):
 
     man babelweb
 
