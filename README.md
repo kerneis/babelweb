@@ -10,6 +10,8 @@ Install and start the latest babelweb release:
     babeld -g 33123 ... &
     babelweb
 
+Browse http://localhost:8080/.
+
 Detailed instructions
 ---------------------
 
