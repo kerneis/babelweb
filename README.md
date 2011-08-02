@@ -29,12 +29,12 @@ You have then two options to install babelweb:
 
 1. Install babelweb globally (in /usr/local by default), with its dependencies:
 
-    make install
+        make install
 
 2. Keep babelweb in the current directory, install dependencies locally, and
    add a global symlink (in /usr/local by default):
 
-    make link
+        make link
 
 If you want to install it once and forget about it, I recommend method 1; if
 you want to track development easily, method 2.  If you change your mind, run
@@ -64,7 +64,7 @@ See the man page for a list a options (also available in the doc/ directory):
 
 You can specify options directly on the command-line:
 
-   sudo babelweb serverPort=80 serverAddress=127.0.0.1 user=www-data
+    sudo babelweb serverPort=80 serverAddress=127.0.0.1 user=www-data
 
 Alternatively, you can manage babelweb options through npm:
 
@@ -76,7 +76,6 @@ command-line options):
     npm start -g babelweb
 
 See `man npm-config` for more details.
-
 
 Security
 --------
@@ -98,4 +97,4 @@ some visual bells and whistles).
 
 Please, do not hesitate to send reports of working and broken browsers.
 
-    Gabriel Kerneis <kerneis@pps.jussieu.fr>
+Gabriel Kerneis <kerneis@pps.jussieu.fr>
