@@ -30,8 +30,11 @@ var config = {
 };
 
 for(key in config) {
-    if(typeof process.env["npm_server_config_"+key] != 'undefined')
-        config[key] = process.env["npm_server_config_"+key];
+    var value = process.env["npm_package_config_"+key];
+    if(typeof value != 'undefined' && value != "") {
+        console.log("npm config get babelweb:"+key+" = "+value);
+        config[key] = value;
+    }
 }
 
 process.argv.forEach(function (val, index, array) {
