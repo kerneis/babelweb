@@ -69,7 +69,7 @@ Alternatively, you can manage babelweb options through npm:
 In that case, you **must** start babelweb through npm too (and cannot use
 command-line options):
 
-    npm start babelweb
+    npm start -g babelweb
 
 (or just `npm start` if you did not install babelweb globally).  See `man
 npm-config` for more details.
