@@ -25,16 +25,20 @@ Clone the repository if you haven't already, and cd into it:
     git clone git://kerneis.info/babelweb
     cd babelweb
 
-Install babelweb globally, with its dependencies:
+You have then two options to install babelweb:
+
+1. Install babelweb globally (in /usr/local by default), with its dependencies:
 
     make install
 
-(run `make uninstall` if you change your mind).
+2. Keep babelweb in the current directory, install dependencies locally, and
+   add a global symlink (in /usr/local by default):
 
-Alternatively, you can keep babelweb in the current directory and install
-dependencies locally with:
+    make link
 
-    npm install .
+If you want to install it once and forget about it, I recommend method 1; if
+you want to track development easily, method 2.  If you change your mind, run
+`make uninstall` (for any of the methods).
 
 Then, start Babel on your local host:
 
@@ -47,8 +51,6 @@ or create a tunnel if it is running on a remote host:
 And finally start babelweb:
 
     babelweb
-
-(or `bin/babelweb` if you kept it local).
 
 By default, the babelweb interface is located at:
 http://localhost:8080/
@@ -73,8 +75,7 @@ command-line options):
 
     npm start -g babelweb
 
-(or just `npm start` if you did not install babelweb globally).  See `man
-npm-config` for more details.
+See `man npm-config` for more details.
 
 
 Security

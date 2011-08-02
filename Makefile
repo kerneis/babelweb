@@ -18,6 +18,9 @@ clean: uninstall
 uninstall:
 	npm rm babelweb -g
 
+link: uninstall
+	npm link
+
 man: man1 $(docs)
 
 man1: $(doc_subfolders)
@@ -31,4 +34,4 @@ man1/%.1: doc/%.md
 man1/%/: doc/%/
 	@[ -d $@ ] || mkdir -p $@
 
-.PHONY: all install clean uninstall man
+.PHONY: all install clean uninstall link man
