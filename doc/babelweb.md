@@ -15,13 +15,20 @@ option of `babeld`).
 
 Options are a list of `key=value` pairs.
 
-* `serverAddress`: local webserver address (default: `::`).
-* `serverPort`: local webserver port (default: `8080`).
-* `babelAddress`: address of the local interface `babeld` is listening on (default: `::1`).
-* `babelPort`:  port of the local interface `babeld` is listening on (default: `33123`).
-* `updateIval`: time between updates to the browser, in milliseconds (default: `3000`).
-* `verbose`: (very) verbose output (default: `false`).
-* `user`: drop priviledges to this user if started as root (default: ``).
+* `serverAddress`:
+   local webserver address (default: `::`).
+* `serverPort`:
+   local webserver port (default: `8080`).
+* `babelAddress`:
+   address of the local interface `babeld` is listening on (default: `::1`).
+* `babelPort`:
+   port of the local interface `babeld` is listening on (default: `33123`).
+* `updateIval`:
+   time between updates to the browser, in milliseconds (default: `3000`).
+* `verbose`:
+   (very) verbose output (default: `false`).
+* `user`:
+   drop priviledges to this user if started as root (default: ``).
 
 ## SECURITY
  
@@ -30,6 +37,15 @@ server used by socket.io (on port 843 --- open your firewall!).  Babelweb
 drops priviledges as soon as the server is started, and refuses to continue if
 dropping priviledges fails.  Use the "user" option to choose which user to drop
 priviledges to.
+
+## SIGNALS
+
+Babelweb reacts to the SIGUSR1 and SIGUSR2 signals:
+
+* SIGUSR1:
+  dump the topology as seen by babelweb (json format).
+* SIGUSR2:
+  restart connection to `babeld`.
 
 ## BUGS
 

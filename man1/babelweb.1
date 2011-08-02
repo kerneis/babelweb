@@ -14,7 +14,7 @@ babelweb [options]
 .fi
 .
 .SH "DESCRIPTION"
-Bab el\-Web is a web\-based monitoring tool for the Babel routing daemon\.  It
+Babelweb is a web\-based monitoring tool for the Babel routing daemon\.  It
 reads informations from \fBbabeld\fR through a local\-interface socket (see the \fB\-g\fR
 option of \fBbabeld\fR)\.
 .
@@ -22,34 +22,54 @@ option of \fBbabeld\fR)\.
 Options are a list of \fBkey=value\fR pairs\.
 .
 .IP "\(bu" 4
-\fBserverAddress\fR: local webserver address (default: \fB::\fR)\.
+\fBserverAddress\fR:
+local webserver address (default: \fB::\fR)\.
 .
 .IP "\(bu" 4
-\fBserverPort\fR: local webserver port (default: \fB8080\fR)\.
+\fBserverPort\fR:
+local webserver port (default: \fB8080\fR)\.
 .
 .IP "\(bu" 4
-\fBbabelAddress\fR: address of the local interface \fBbabeld\fR is listening on (default: \fB::1\fR)\.
+\fBbabelAddress\fR:
+address of the local interface \fBbabeld\fR is listening on (default: \fB::1\fR)\.
 .
 .IP "\(bu" 4
-\fBbabelPort\fR:  port of the local interface \fBbabeld\fR is listening on (default: \fB33123\fR)\.
+\fBbabelPort\fR:
+port of the local interface \fBbabeld\fR is listening on (default: \fB33123\fR)\.
 .
 .IP "\(bu" 4
-\fBupdateIval\fR: time between updates to the browser, in milliseconds (default: \fB3000\fR)\.
+\fBupdateIval\fR:
+time between updates to the browser, in milliseconds (default: \fB3000\fR)\.
 .
 .IP "\(bu" 4
-\fBverbose\fR: (very) verbose output (default: \fBfalse\fR)\.
+\fBverbose\fR:
+(very) verbose output (default: \fBfalse\fR)\.
 .
 .IP "\(bu" 4
-\fBuser\fR: drop priviledges to this user if started as root (default: \fB\fR)\.
+\fBuser\fR:
+drop priviledges to this user if started as root (default: \fB\fR)\.
 .
 .IP "" 0
 .
 .SH "SECURITY"
 Running as root is not mandatory but recommended to enable the Flash policy
-server used by socket\.io (on port 843 \-\-\- open your firewall!)\.  Bab el\-Web
+server used by socket\.io (on port 843 \-\-\- open your firewall!)\.  Babelweb
 drops priviledges as soon as the server is started, and refuses to continue if
 dropping priviledges fails\.  Use the "user" option to choose which user to drop
 priviledges to\.
+.
+.SH "SIGNALS"
+Babelweb reacts to the SIGUSR1 and SIGUSR2 signals:
+.
+.IP "\(bu" 4
+SIGUSR1:
+dump the topology as seen by babelweb (json format)\.
+.
+.IP "\(bu" 4
+SIGUSR2:
+restart connection to \fBbabeld\fR\|\.
+.
+.IP "" 0
 .
 .SH "BUGS"
 When you find issues, please report them:
