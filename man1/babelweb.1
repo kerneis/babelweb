@@ -1,0 +1,78 @@
+.\" Generated with Ronnjs/v0.1
+.\" http://github.com/kapouer/ronnjs/
+.
+.TH "BABELWEB" "1" "August 2011" "" ""
+.
+.SH "NAME"
+\fBbabelweb\fR \-\- monitoring tool for babel
+.
+.SH "SYNOPSIS"
+.
+.nf
+babelweb [options]
+.
+.fi
+.
+.SH "DESCRIPTION"
+Bab el\-Web is a web\-based monitoring tool for the Babel routing daemon\.  It
+reads informations from \fBbabeld\fR through a local\-interface socket (see the \fB\-g\fR
+option of \fBbabeld\fR)\.
+.
+.SH "OPTIONS"
+Options are a list of \fBkey=value\fR pairs\.
+.
+.IP "\(bu" 4
+\fBserverAddress\fR: local webserver address (default: \fB::\fR)\.
+.
+.IP "\(bu" 4
+\fBserverPort\fR: local webserver port (default: \fB8080\fR)\.
+.
+.IP "\(bu" 4
+\fBbabelAddress\fR: address of the local interface \fBbabeld\fR is listening on (default: \fB::1\fR)\.
+.
+.IP "\(bu" 4
+\fBbabelPort\fR:  port of the local interface \fBbabeld\fR is listening on (default: \fB33123\fR)\.
+.
+.IP "\(bu" 4
+\fBupdateIval\fR: time between updates to the browser, in milliseconds (default: \fB3000\fR)\.
+.
+.IP "\(bu" 4
+\fBverbose\fR: (very) verbose output (default: \fBfalse\fR)\.
+.
+.IP "\(bu" 4
+\fBuser\fR: drop priviledges to this user if started as root (default: \fB\fR)\.
+.
+.IP "" 0
+.
+.SH "SECURITY"
+Running as root is not mandatory but recommended to enable the Flash policy
+server used by socket\.io (on port 843 \-\-\- open your firewall!)\.  Bab el\-Web
+drops priviledges as soon as the server is started, and refuses to continue if
+dropping priviledges fails\.  Use the "user" option to choose which user to drop
+priviledges to\.
+.
+.SH "BUGS"
+When you find issues, please report them:
+.
+.IP "\(bu" 4
+web: \fIhttp://github\.com/kerneis/babelweb/issues\fR
+.
+.IP "\(bu" 4
+email:
+Babel users mailing\-list \fIbabel\-users@lists\.alioth\.debian\.org\fR
+Gabriel Kerneis \fIgabriel@kerneis\.info\fR
+.
+.IP "" 0
+.
+.P
+If possible, try to reproduce the bug with the \fBverbose=true\fR option and
+include the output in your report\.
+.
+.P
+You can also look for kerneis in ##babel on irc://irc\.freenode\.net\.
+.
+.SH "SEE ALSO"
+babelweb\-changelog(1), babeld(8)\.
+.
+.SH "AUTHOR"
+Gabriel Kerneis \fIgabriel@kerneis\.info\fR

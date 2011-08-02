@@ -26,7 +26,7 @@ var config = {
   , "babelPort" : "33123"        /* Babel interface port */
   , "updateIval": 3000           /* Time between two updates (ms) */
   , "verbose": false             /* Print every message received from Babel nodes */
-  , "uid": ""                    /* Drop priviledges to this user */
+  , "user": ""                    /* Drop priviledges to this user */
 };
 
 for(key in config) {
@@ -49,7 +49,7 @@ var babel = {};
 var needUpdate = false;
 
 if(process.getuid() == 0 && config.uid == "") {
-    console.error("Refusing to run as root.  Set the \"uid\" option, please.");
+    console.error("Refusing to run as root.  Set the \"user\" option, please.");
     process.exit(1);
 }
 
@@ -67,7 +67,7 @@ server.listen(config.serverPort, config.serverAddress);
 /* Needs to be root to enable Flash policy server on port 843 */
 var io = require('socket.io').listen(server);
 
-io.configure('production', function(){
+io.configure(function(){
   io.enable('browser client minification');
   io.enable('browser client etag');
   io.set('log level', config.verbose ? 3 : 1);
@@ -81,19 +81,9 @@ io.configure('production', function(){
   ]);
 });
 
-io.configure('development', function(){
-  io.set('transports', [
-    'websocket'
-//  , 'flashsocket'
-//  , 'htmlfile'
-  , 'xhr-polling'
-//  , 'jsonp-polling'
-  ]);
-});
-
-if(config.uid != "") {
+if(config.user != "") {
     try {
-        process.setuid(config.uid);
+        process.setuid(config.user);
         console.error("Dropped priviledges.");
     }
     catch(err) {

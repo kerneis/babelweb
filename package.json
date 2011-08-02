@@ -1,18 +1,27 @@
 {
-    "name": "babelweb"
-  , "version": "0.1.0"
-  , "description": "Web-based monitoring tool for the Babel routing protocol"
-  , "homepage": "http://www.pps.jussieu.fr/~kerneis/software"
-  , "keywords": [ "babel", "routing", "monitoring" ]
-  , "author": "Gabriel Kerneis <kerneis@pps.jussieu.fr> (http://www.pps.jussieu.fr/~kerneis/)"
-  , "repository":{
-        "type": "git"
-      , "url": "git://kerneis.info/git/babelweb.git"
-    }
-  , "man" : "./man/babelweb.1"
-  , "dependencies": {
-        "socket.io": "0.7.x"
-      , "connect": "1.6.x"
-    }
-  , "engines": { "node": "0.4.x" }
+  "name": "babelweb"
+, "version": "0.0.0"
+, "description": "Web-based monitoring tool for the Babel routing protocol"
+, "homepage": "http://www.pps.jussieu.fr/~kerneis/software"
+, "keywords": [ "babel", "routing", "monitoring" ]
+, "author": "Gabriel Kerneis <kerneis@pps.jussieu.fr> (http://www.pps.jussieu.fr/~kerneis/)"
+, "repository":
+  { "type": "git"
+  , "url": "git://kerneis.info/babelweb" }
+, "scripts" : {"start": "bin/babelweb"}
+, "dependencies":
+  { "socket.io": "0.7.x"
+  , "connect": "1.6.x" }
+, "devDependencies" :
+  { "ronn" : "0.3.x" }
+, "bundleDependencies":
+   [ "socket.io"
+   , "connect" ]
+, "engines": { "node": "0.4.x" }
+, "directories" :
+  { "doc" : "./doc"
+  , "man" : "./man1"
+  , "bin" : "./bin" }
+, "bin" : { "babelweb" : "./bin/babelweb" }
+, "preferGlobal": true
 }
