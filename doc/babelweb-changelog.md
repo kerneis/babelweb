@@ -1,4 +1,4 @@
-npm-changelog(1) -- Changes
+babelweb-changelog(1) -- Changes
 ===========================
 
 ## HISTORY
