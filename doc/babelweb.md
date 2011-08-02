@@ -7,7 +7,7 @@ babelweb(1) -- monitoring tool for babel
 
 ## DESCRIPTION
 
-Bab el-Web is a web-based monitoring tool for the Babel routing daemon.  It
+Babelweb is a web-based monitoring tool for the Babel routing daemon.  It
 reads informations from `babeld` through a local-interface socket (see the `-g`
 option of `babeld`).
 
@@ -26,7 +26,7 @@ Options are a list of `key=value` pairs.
 ## SECURITY
  
 Running as root is not mandatory but recommended to enable the Flash policy
-server used by socket.io (on port 843 --- open your firewall!).  Bab el-Web
+server used by socket.io (on port 843 --- open your firewall!).  Babelweb
 drops priviledges as soon as the server is started, and refuses to continue if
 dropping priviledges fails.  Use the "user" option to choose which user to drop
 priviledges to.

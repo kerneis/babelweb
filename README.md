@@ -1,4 +1,4 @@
-Bab el-Web -- Monitoring tool for the Babel routing daemon
+Babelweb -- Monitoring tool for the Babel routing daemon
 ==========================================================
 
 Quick start  (from search.npmjs.org)
@@ -80,18 +80,18 @@ See `man npm-config` for more details.
 Security
 --------
  
-Bab el-Web works better when started as root, and will drop priviledges as soon
+Babelweb works better when started as root, and will drop priviledges as soon
 as possible.  See the man page for more details.
 
 Browser support
 ---------------
 
-Bab el-Web needs a browser supporting javascript (to fetch remote data)
+Babelweb needs a browser supporting javascript (to fetch remote data)
 and SVG (to display the network graph).  If Adobe Flash is installed, it
 might be used to establish a more reliable connection (but websockets
 are prefered if your browser supports them).
 
-Bab el-Web has been tested and found to work with recent versions of Firefox
+Babelweb has been tested and found to work with recent versions of Firefox
 (with some minor refreshing glitches), Chrome, Safari and Opera (except for
 some visual bells and whistles).
 
