@@ -24,6 +24,8 @@
     <input type="checkbox" id="show_all" onClick="redisplay();" />
     <label for="show_all">Show uninstalled routes.</label><br />
     <input type="button" value="Randomize" onClick="routers={};recompute_network();redisplay();" />
+    <input type="button" value="Zoom in" onClick="zoomIn(1.5);routers={};recompute_network();redisplay();" />
+    <input type="button" value="Zoom out" onClick="zoomOut(1.5);routers={};recompute_network();redisplay();" />
     </p>
     <p>Updates : <span id="updates">0</span>.
        State: <span id="state" class="bad">disconnected</span>.</p>

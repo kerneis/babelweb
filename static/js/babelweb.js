@@ -160,22 +160,32 @@ var count = function(name) {
 }
 
 /* Setup svg graph */
-var w = 600, h = 400;
+var width = 600, height = 400; /* display size */
+var w, h, xScale, yScale ;     /* virtual size */
+var force = d3.layout.force(); /* force to coerce nodes */
+
+var setZoomLevel = function(x, y) {
+    w = x; h = y;
+    xScale = d3.scale.linear().domain([0, w]).range([0,width]);
+    yScale = d3.scale.linear().domain([0, h]).range([0,height]);
+    force.size([w, h]);
+}
+
+var zoomIn = function(factor) { setZoomLevel(w / factor, h / factor); }
+var zoomOut = function(factor) { setZoomLevel(w * factor, h * factor); }
+
+setZoomLevel(width, height);
 
 var vis = d3.select("#fig")
     .append("svg:svg")
-    .attr("width", w)
-    .attr("height", h);
+    .attr("width", width)
+    .attr("height", height);
 
 /* Compute a svg path from route data */
 var route_path = d3.svg.line()
-    .x(function(d) { return d.x; })
-    .y(function(d) { return d.y; })
+    .x(function(d) { return xScale(d.x); })
+    .y(function(d) { return yScale(d.y); })
     .interpolate("linear");
-
-/* Add a force simulation to coerce nodes */
-var force = d3.layout.force()
-        .size([w, h]);
 
 force.on("tick", function() {
   me = babel.self.alamakota.id;
@@ -186,8 +196,8 @@ force.on("tick", function() {
           "red" : ( d.refmetric == 0 ? "green" : "blue");
           return color;
           })
-     .attr("cx", function(d) { return d.x; })
-     .attr("cy", function(d) { return d.y; });
+     .attr("cx", function(d) { return xScale(d.x); })
+     .attr("cy", function(d) { return yScale(d.y); });
 
   vis.selectAll("path.route")
      .attr("stroke-opacity", function(d) {
@@ -319,8 +329,8 @@ var redisplay = function() {
         .data(nodes);
     node.enter().append("svg:circle")
         .attr("class", "node")
-        .attr("cx", function(d) { return d.x; })
-        .attr("cy", function(d) { return d.y; })
+        .attr("cx", function(d) { return xScale(d.x); })
+        .attr("cy", function(d) { return yScale(d.y); })
         .attr("r", 5)
         .attr("stroke-width", "1.5px")
         .attr("stroke", "#fff")
