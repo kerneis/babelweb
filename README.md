@@ -1,7 +1,7 @@
 Bab el-Web -- Monitoring tool for the Babel routing daemon
 ==========================================================
 
-Quick start
+Quick start  (from search.npmjs.org)
 -----------
 
 Install and start the latest babelweb release:
@@ -12,7 +12,7 @@ Install and start the latest babelweb release:
 
 Browse http://localhost:8080/.
 
-Detailed instructions
+Detailed instructions (from git repository or archive)
 ---------------------
 
 You'll need nodejs (>= 0.4.0) and npm (>=1.0).  If you don't have them
