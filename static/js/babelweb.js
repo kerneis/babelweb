@@ -33,7 +33,7 @@ socket.on('message', function(message){
                             d3.select(id)
                               .attr("stroke","#f00")
                               .attr("stroke-width", "3px");
-                            // XXX put just before of d3.select("circle.node")
+                            // XXX put just before d3.select("circle.node")
                             })
                     .on("mouseout", function(d) {
                             var id = "#link-"+normalize_id(d.key);
@@ -268,7 +268,7 @@ var recompute_network = function() {
                indirect routes later */
             if(typeof addrToRouterId[r.via] != 'undefined' &&
                             addrToRouterId[r.via] != r.id) {
-                    console.log("bug: collision in addrToRouterId computation");
+                    d3.select("#msg").text("unexpected collision in router id computation");
                     /* Prefer installed routes in that case */
                     if(r.installed == "yes") addrToRouterId[r.via] = r.id;
             } else {
