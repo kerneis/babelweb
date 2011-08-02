@@ -187,13 +187,20 @@ var route_path = d3.svg.line()
     .y(function(d) { return yScale(d.y); })
     .interpolate("linear");
 
+var isNeighbour = function(id) {
+    for(var n in babel.neighbour)
+        if(addrToRouterId[babel.neighbour[n].address] == id)
+            return true;
+    return false;
+}
+
 force.on("tick", function() {
   me = babel.self.alamakota.id;
 
   vis.selectAll("circle.node")
      .style("fill", function(d) {
           var color =  d.nodeName == me ?
-          "red" : ( d.refmetric == 0 ? "green" : "blue");
+          "red" : ( isNeighbour(d.nodeName) ?  "green" : "blue");
           return color;
           })
      .attr("cx", function(d) { return xScale(d.x); })
