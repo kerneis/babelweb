@@ -8,15 +8,12 @@
 , "repository":
   { "type": "git"
   , "url": "git://kerneis.info/babelweb" }
-, "scripts" : {"start": "bin/babelweb"}
+, "scripts" : {"start": "./bin/babelweb"}
 , "dependencies":
   { "socket.io": "0.7.x"
   , "connect": "1.6.x" }
 , "devDependencies" :
   { "ronn" : "0.3.x" }
-, "bundleDependencies":
-   [ "socket.io"
-   , "connect" ]
 , "engines": { "node": "0.4.x" }
 , "directories" :
   { "doc" : "./doc"
