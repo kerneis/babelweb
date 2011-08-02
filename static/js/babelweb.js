@@ -209,7 +209,7 @@ force.on("tick", function() {
   vis.selectAll("path.route")
      .attr("stroke-opacity", function(d) {
         var show_all = d3.select("#show_all").property("checked");
-        return d.route.installed == "yes" ? 1 : (show_all ? 0.3 : 0);
+        return d.route.installed == "yes" ? 1 : (show_all ? 0.15 : 0);
         })
      .attr("d", function(d) { return route_path(d.path); });
 });
