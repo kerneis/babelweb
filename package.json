@@ -21,4 +21,12 @@
   , "bin" : "./bin" }
 , "bin" : { "babelweb" : "./bin/babelweb" }
 , "preferGlobal": true
+, "licenses" :
+  [ { "type" : "MIT"
+    , "url" : "http://github.com/kerneis/babelweb/raw/master/LICENSE"
+    }
+  , { "type" : "3-clause BSD"
+    , "url" : "http://github.com/kerneis/babelweb/raw/master/LICENSE.d3"
+    }
+  ]
 }
