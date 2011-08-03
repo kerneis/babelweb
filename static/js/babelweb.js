@@ -20,6 +20,11 @@ var update_status = function(msg, good) {
 socket.on('connect', function() { update_status("connected", true); });
 socket.on('disconnect', function() { update_status("disconnected", false); });
 
+/* Colors */
+var installed = "#8BDB00";
+var uninstalled = "#CAFF70";
+var unreachable = "#FF7256";
+
 /* Handle updates */
 socket.on('message', function(message){
                 var m = JSON.parse(message);
@@ -104,12 +109,13 @@ var recompute_table = function(name) {
                  tr.transition()
                    .duration(1000)
                    .style("background-color",
-                                 d.value.installed == "yes"?
-                                 "#CAFF70":"#FF7256");
+                                 d.value.installed == "yes" ?
+                                 installed : (parseInt(d.value.metric, 10) < 65535 ?
+                                 uninstalled : unreachable));
             else if(name == "neighbour") {
                  var color = d3.scale.linear()
                                .domain([0, 16])
-                               .range(["#FF7256","#CAFF70"]);
+                               .range([unreachable,installed]);
                  tr.transition()
                    .duration(1000)
                    .style("background-color", color(
