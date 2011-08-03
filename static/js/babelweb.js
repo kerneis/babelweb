@@ -345,11 +345,16 @@ var redisplay = function() {
         .each(function(d) {
             if(d.nodeName != babel.self.alamakota.id)
                 d3.select(this).call(force.drag);
-                });
+                })
+        .append("svg:title");
     node.exit().remove();
 
-    node.append("svg:title")
-        .text(function(d) { return d.nodeName + " (metric: "+d.metric+")"; });
+    /* update metric in node title */
+    vis.selectAll("circle.node").each(function(d) {
+        d3.select(this).select("title")
+          .text(d.nodeName + " (metric: "+d.metric+")");
+
+    });
  
     /* Display routes */
     var route = vis.selectAll("path.route")
