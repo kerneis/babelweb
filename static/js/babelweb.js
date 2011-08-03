@@ -30,6 +30,18 @@ var colors = {
     , route: palette.gray
 }
 
+for(id in colors) {
+    d3.selectAll(".legend-"+id)
+        .append("svg:svg")
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("class", "legend-dot")
+        .append("svg:circle")
+        .attr("cx", 5).attr("cy", 5).attr("r", 5)
+        .attr("stroke-width", 0)
+        .attr("fill",colors[id]);
+}
+
 var costColor = d3.scale.log()
     .domain([0, 96, 256, 65535])
     .range([colors.wiredLink,
@@ -205,7 +217,7 @@ var zoomOut = function(factor) { setZoomLevel(w * factor, h * factor); }
 setZoomLevel(width, height);
 
 var vis = d3.select("#fig")
-    .append("svg:svg")
+    .insert("svg:svg", "span.legend")
     .attr("width", width)
     .attr("height", height);
 

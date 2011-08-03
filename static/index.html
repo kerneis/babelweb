@@ -17,16 +17,12 @@
   <body>
       <h1>BabelWeb</h1>
       <h2>Routers</h2>
-      <div id="fig"></div>
-      <script type="text/javascript" src="/js/babelweb.js"></script>
-    <h3>Legend</h3>
-    <p>
-    <ul><li>Red dot: you</li>
-        <li>Green dots: your neighbours</li>
-        <li>Blue dots: others routers advertising routes to you (in a
-        galaxy far far away)</li>
-    </ul>
-    </p>
+      <p id="fig">
+      <span class="legend">Legend</span>
+      <span class="legend-me">Me</span>
+      <span class="legend-neighbour">Neighbours</span>
+      <span class="legend-other">Others</span>
+      </p>
     <h3>Configuration</h3>
     <p>
     <input type="checkbox" id="show_all" checked = "checked" onClick="redisplay();" />
@@ -55,6 +51,12 @@
         </tr>
     </tbody>
 </table>
+<p><span class="legend">Legend</span>
+<span class="legend-wiredLink">Wired link (96)</span>
+<span class="legend-losslessWireless">Lossless wireless link (256)</span>
+<span class="legend-unreachable">Unreachable (65535)</span> <br />
+(based on <tt>rxcost</tt>; colors are interpolated logarithmically)
+</p>
 
 <h2>Routes</h2>
 <table id="route" frame="border" rules="all">
@@ -73,6 +75,11 @@
         </tr>
     </tbody>
 </table>
+<p><span class="legend">Legend</span>
+<span class="legend-installed">Installed</span>
+<span class="legend-uninstalled">Reachable</span>
+<span class="legend-unreachable">Unreachable (<tt>metric</tt> 65535)</span>
+</p>
 
 <h2>Exported routes</h2>
 <table id="xroute" frame="border" rules="all">
@@ -99,5 +106,6 @@ It is inspired by BabelTool, a Java software by <a
     href="http://www.pps.jussieu.fr/~pejman">Pejman Attar</a> and Alexis
 Roso.  Many thanks to Didier Gillet who coined the name.
 </p>
+<script type="text/javascript" src="/js/babelweb.js"></script>
   </body>
 </html>
