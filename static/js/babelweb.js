@@ -23,7 +23,7 @@ socket.on('disconnect', function() { update_status("disconnected", false); });
 /* Colors */
 var installed = "#8BDB00";
 var uninstalled = "#CAFF70";
-var unreachable = "#FF7256";
+var unreachable = "#DB2500";
 
 /* Handle updates */
 socket.on('message', function(message){
