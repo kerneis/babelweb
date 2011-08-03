@@ -3,7 +3,6 @@
 * remove work around for babelz bug?
 * do not highlight unreachable routes
 * put route on top of the graph when highlighted
-* change neighbour colors (based on rxcost)
 * warn if txcost > 2*rxcost?
 * zoom with mouse wheel
 * do not randomize on zoom (hard to do)

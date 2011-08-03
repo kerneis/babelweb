@@ -25,6 +25,13 @@ var installed = "#8BDB00";
 var uninstalled = "#CAFF70";
 var unreachable = "#DB2500";
 
+var wiredLink = installed;
+var losslessWireless = uninstalled;
+var costColor = d3.scale.log()
+    .domain([0, 96, 256, 65535])
+    .range([wiredLink, wiredLink, losslessWireless, unreachable]);
+
+
 /* Handle updates */
 socket.on('message', function(message){
                 var m = JSON.parse(message);
@@ -113,13 +120,9 @@ var recompute_table = function(name) {
                                  installed : (parseInt(d.value.metric, 10) < 65535 ?
                                  uninstalled : unreachable));
             else if(name == "neighbour") {
-                 var color = d3.scale.linear()
-                               .domain([0, 16])
-                               .range([unreachable,installed]);
                  tr.transition()
                    .duration(1000)
-                   .style("background-color", color(
-                                 bitCount(parseInt(d.value.reach, 16))));
+                   .style("background-color", costColor(parseInt(d.value.rxcost, 10)));
             }
             var row = tr.selectAll("td")
               .data(headers.map(function(h){return d.value[h];}));
