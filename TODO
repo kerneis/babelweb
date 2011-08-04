@@ -1,7 +1,5 @@
-* bug: old lines left in route tables
-* bug: highlight on some lines does not work (related to previous one?)
 * do not highlight unreachable routes
 * put route on top of the graph when highlighted
 * warn if txcost > 2*rxcost?
-* zoom with mouse wheel
+* zoom with mouse wheel: too complicated (wait for next d3 release?)
 * resize graph automatically with window size
