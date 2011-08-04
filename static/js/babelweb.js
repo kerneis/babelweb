@@ -243,10 +243,6 @@ var recompute_network = function() {
 
         var metric = parseInt(r.metric, 10);
         var refmetric = parseInt(r.refmetric, 10);
-        /* Skip unreachable routers */
-        if(metric >= 65534) {
-            continue;
-        }
 
         if(!routers[r.id]) {
             /* New router ID discovered */
@@ -263,18 +259,13 @@ var recompute_network = function() {
                 routers[r.id].via = r.via;
             }
         }
-        if(refmetric == 0) {
-            /* This is a direct neighbour, we need
-               to remember its address to set up
-               indirect routes later */
-            if(typeof addrToRouterId[r.via] != 'undefined' &&
-                            addrToRouterId[r.via] != r.id) {
-                    d3.select("#msg").text("unexpected collision in router id computation");
-                    /* Prefer installed routes in that case */
-                    if(r.installed == "yes") addrToRouterId[r.via] = r.id;
-            } else {
-                    addrToRouterId[r.via] = r.id;
-            }
+
+        /* Assume that the router id of a neighbour is the id of the
+         * router annoucing the shortest route through this neighbour.
+         * (This is a hack, a neighbour might hide routes to itself.) */
+        if(typeof addrToRouterId[r.via] == 'undefined' ||
+                refmetric < routers[addrToRouterId[r.via]].refmetric) {
+            addrToRouterId[r.via] = r.id;
         }
     }
     /* Populate nodes and metrics */
@@ -292,10 +283,14 @@ var recompute_network = function() {
                         });
             }
             else if(r != me) {
+                if(typeof addrToRouterId[routers[r].via] == 'undefined') {
+                    console.log("bug: couldn't guess router id for "+routers[r].via);
+                } else {
                 metrics.push({source:routers[addrToRouterId[routers[r].via]],
                         target:routers[r],
                         metric:routers[r].refmetric,
                         });
+                }
                 /* This is not a route, but we add a link
                    to enforce a more realistic structure */
                 metrics.push({source:routers[me],

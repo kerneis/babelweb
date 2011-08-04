@@ -1,6 +1,5 @@
 * bug: old lines left in route tables
 * bug: highlight on some lines does not work (related to previous one?)
-* remove work around for babelz bug?
 * do not highlight unreachable routes
 * put route on top of the graph when highlighted
 * change route colors (installed, not installed, unreachable)
