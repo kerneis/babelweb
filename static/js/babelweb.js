@@ -385,10 +385,11 @@ var recompute_network = function() {
     }
     for (var n in neighToRouterMetric)
         for(var id in neighToRouterMetric[n])
-            metrics.push({source:routers[addrToRouterId[n]],
-                            target:routers[id],
-                            metric:neighToRouterMetric[n][id].refmetric
-                            });
+            if(neighToRouterMetric[n][id].refmetric < 65535) // Do not display retracted routes
+                    metrics.push({source:routers[addrToRouterId[n]],
+                                    target:routers[id],
+                                    metric:neighToRouterMetric[n][id].refmetric
+                                    });
 
    /* Build a list of routes to display */
    routes = [];
