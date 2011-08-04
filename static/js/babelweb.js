@@ -209,6 +209,7 @@ var count = function(name) {
 var width = 600, height = 400; /* display size */
 var w, h, xScale, yScale ;     /* virtual size */
 var force = d3.layout.force(); /* force to coerce nodes */
+force.charge(-200); /* stronger repulsion enhances graph */
 
 var setZoomLevel = function(x, y) {
     w = x; h = y;
@@ -229,7 +230,7 @@ var zoomOut = function(factor) {
 }
 var zoomIn = function(factor) { zoomOut(1/factor); }
 
-setZoomLevel(width, height);
+setZoomLevel(width * 2, height * 2);
 
 var randomizeNodes = function() {
     var me = babel.self.alamakota.id;
