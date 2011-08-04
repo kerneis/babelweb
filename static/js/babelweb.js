@@ -328,8 +328,10 @@ var recompute_network = function() {
     }
     routers[me].metric = 0;
 
-    /* Collect routers, with the minimal metric to reach them */
-    addrToRouterId = {};
+    /* Collect:
+       - routers, with the minimal metric to reach them from me,
+       - neighbours, with the minimal metric to every router */
+    var neighToRouterMetric = {};
     for (var route in babel.route) {
         var r = babel.route[route];
 
@@ -341,25 +343,32 @@ var recompute_network = function() {
             routers[r.id] = {
                 nodeName:r.id,
                 metric:metric,
-                refmetric:refmetric,
                 via:r.via,
             };
         } else {
             if(metric < routers[r.id].metric) {
                 routers[r.id].metric = metric;
-                routers[r.id].refmetric = refmetric;
                 routers[r.id].via = r.via;
             }
         }
 
-        /* Assume that the router id of a neighbour is the id of the
-         * router annoucing the shortest route through this neighbour.
-         * (This is a hack, a neighbour might hide routes to itself.) */
-        if(typeof addrToRouterId[r.via] == 'undefined' ||
-                refmetric < routers[addrToRouterId[r.via]].refmetric) {
-            addrToRouterId[r.via] = r.id;
-        }
+        if(!neighToRouterMetric[r.via])
+            neighToRouterMetric[r.via] = {};
+        if(!neighToRouterMetric[r.via][r.id])
+            neighToRouterMetric[r.via][r.id] = { refmetric: refmetric };
+        else
+            neighToRouterMetric[r.via][r.id].refmetric = Math.min(neighToRouterMetric[r.via][r.id].refmetric, refmetric);
     }
+    /* Assume that the router id of a neighbour is the id of the
+     * router annoucing the shortest route to this neighbour.
+     * (This is a hack, a neighbour might hide routes to itself.) */
+    addrToRouterId = {};
+    for(var n in neighToRouterMetric) {
+            addrToRouterId[n] = d3.first(d3.entries(neighToRouterMetric[n]), function(a, b) {
+            return a.value.refmetric < b.value.refmetric ? -1 : a.value.refmetric > b.value.refmetric ? 1 : 0;
+            }).key;
+    }
+
     /* Populate nodes and metrics */
     nodes = []; metrics = [];
     for (var r in routers) {
@@ -367,31 +376,20 @@ var recompute_network = function() {
             /* oops, router vanished! */
             delete routers[r];
         else {
-            nodes.push(routers[r]);
-            if(routers[r].refmetric == 0) {
-                metrics.push({source:routers[me],
-                        target:routers[r],
-                        metric:routers[r].metric,
-                        });
-            }
-            else if(r != me) {
-                if(typeof addrToRouterId[routers[r].via] == 'undefined') {
-                    console.log("bug: couldn't guess router id for "+routers[r].via);
-                } else {
-                metrics.push({source:routers[addrToRouterId[routers[r].via]],
-                        target:routers[r],
-                        metric:routers[r].refmetric,
-                        });
-                }
-                /* This is not a route, but we add a link
-                   to enforce a more realistic structure */
-                metrics.push({source:routers[me],
-                        target:routers[r],
-                        metric:routers[r].metric,
-                        });
-            }
+           nodes.push(routers[r]);
+           metrics.push({source:routers[me],
+                           target:routers[r],
+                           metric:routers[r].metric,
+                           });
         }
     }
+    for (var n in neighToRouterMetric)
+        for(var id in neighToRouterMetric[n])
+            metrics.push({source:routers[addrToRouterId[n]],
+                            target:routers[id],
+                            metric:neighToRouterMetric[n][id].refmetric
+                            });
+
    /* Build a list of routes to display */
    routes = [];
    for (var r_key in babel.route) {
