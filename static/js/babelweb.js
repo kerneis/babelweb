@@ -11,21 +11,26 @@ var nodes = [], metrics = [], routes = [];
 
 /* Colors */
 var palette = {
-      "green": "#8BDB00"
-    , "lightGreen": "#CAFF70"
-    , "red": "#DB2500"
-    , "blue": "#0080FF"
-    , "gray": "#999"
+      "green": "#00B000"
+    , "lightGreen": "#66F26A"
+    , "red": "#CC0000"
+    , "blue": "#24A7FF"
+    , "yellow": "#FFFF00"
+    , "lightYellow": "#FAFF75"
+    , "gray": "#CCCCCC"
+    , "darkBlue": "#000070"
+    , "darkGreen": "#116600"
+    , "darkRed": "#BD0000"
 }
 var colors = {
-      installed: palette.green
-    , uninstalled: palette.lightGreen
+      installed: palette.yellow
+    , uninstalled: palette.lightYellow
     , unreachable: palette.red
-    , wiredLink: palette.green
-    , losslessWireless: palette.lightGreen
-    , me: palette.red
-    , neighbour: palette.green
-    , other: palette.blue
+    , wiredLink: palette.blue
+    , losslessWireless: palette.green
+    , me: palette.darkRed
+    , neighbour: palette.darkGreen
+    , other: palette.darkBlue
     , selected: palette.red
     , route: palette.gray
 }
