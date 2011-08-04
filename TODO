@@ -6,5 +6,4 @@
 * change neighbour colors (based on rxcost)
 * warn if txcost > 2*rxcost?
 * zoom with mouse wheel
-* do not randomize on zoom (hard to do)
 * resize graph automatically with window size
