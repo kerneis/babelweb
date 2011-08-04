@@ -9,13 +9,56 @@ var addrToRouterId = {}; /* Associate address to router id, for neighbours */
    the layout. */
 var nodes = [], metrics = [], routes = [];
 
+/* Colors */
+var palette = {
+      "green": "#8BDB00"
+    , "lightGreen": "#CAFF70"
+    , "red": "#DB2500"
+    , "blue": "#0080FF"
+    , "gray": "#999"
+}
+var colors = {
+      installed: palette.green
+    , uninstalled: palette.lightGreen
+    , unreachable: palette.red
+    , wiredLink: palette.green
+    , losslessWireless: palette.lightGreen
+    , me: palette.red
+    , neighbour: palette.green
+    , other: palette.blue
+    , selected: palette.red
+    , route: palette.gray
+}
+
+for(id in colors) {
+    d3.selectAll(".legend-"+id)
+        .append("svg:svg")
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("class", "legend-dot")
+        .append("svg:circle")
+        .attr("cx", 5).attr("cy", 5).attr("r", 5)
+        .attr("stroke-width", 0)
+        .attr("fill",colors[id]);
+}
+
+var costColor = d3.scale.log()
+    .domain([0, 96, 256, 65535])
+    .range([colors.wiredLink,
+            colors.wiredLink,
+            colors.losslessWireless,
+            colors.unreachable]);
+
 /* socket.io server */
 var socket = io.connect();
 
 /* Update status message */
 var update_status = function(msg, good) {
         d3.select("#state").text(msg);
-        d3.select("#state").classed("bad", !good).classed("good", good);
+        if(good)
+            d3.select("#state").style("background-color", palette.green);
+        else
+            d3.select("#state").style("background-color", palette.red);
 }
 socket.on('connect', function() { update_status("connected", true); });
 socket.on('disconnect', function() { update_status("disconnected", false); });
@@ -32,7 +75,7 @@ socket.on('message', function(message){
                             var id = "#link-"+normalize_id(d.key);
                             d3.select(this).style("opacity","0.7");
                             d3.select(id)
-                              .attr("stroke","#f00")
+                              .attr("stroke",colors.selected)
                               .attr("stroke-width", "3px");
                             // XXX put just before d3.select("circle.node")
                             })
@@ -41,7 +84,7 @@ socket.on('message', function(message){
                             var id = "#link-"+normalize_id(d.key);
                             d3.select(this).style("opacity","");
                             d3.select(id)
-                              .attr("stroke","#999")
+                              .attr("stroke",colors.route)
                               .attr("stroke-width", "1px");
                             });
                 /* Neighbours table */
@@ -53,7 +96,7 @@ socket.on('message', function(message){
                             if(typeof addrToRouterId[d.value.address] == 'undefined') return;
                             var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
                             d3.select(id)
-                              .attr("stroke","#f00")
+                              .attr("stroke",colors.selected)
                               .attr("r", "8");
                             })
                     .on("mouseout", function(d) {
@@ -62,7 +105,7 @@ socket.on('message', function(message){
                             if(typeof addrToRouterId[d.value.address] == 'undefined') return;
                             var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
                             d3.select(id)
-                              .attr("stroke","#fff")
+                              .attr("stroke","white")
                               .attr("r", "5");
                             });
                 /* Exported routes tables */
@@ -110,16 +153,13 @@ var recompute_table = function(name) {
                  tr.transition()
                    .duration(1000)
                    .style("background-color",
-                                 d.value.installed == "yes"?
-                                 "#CAFF70":"#FF7256");
+                                 d.value.installed == "yes" ?
+                                 colors.installed : (parseInt(d.value.metric, 10) < 65535 ?
+                                 colors.uninstalled : colors.unreachable));
             else if(name == "neighbour") {
-                 var color = d3.scale.linear()
-                               .domain([0, 16])
-                               .range(["#FF7256","#CAFF70"]);
                  tr.transition()
                    .duration(1000)
-                   .style("background-color", color(
-                                 bitCount(parseInt(d.value.reach, 16))));
+                   .style("background-color", costColor(parseInt(d.value.rxcost, 10)));
             }
             var row = tr.selectAll("td")
               .data(headers.map(function(h){return d.value[h];}));
@@ -207,7 +247,7 @@ var randomizeNodes = function() {
 }
 
 var vis = d3.select("#fig")
-    .append("svg:svg")
+    .insert("svg:svg", "span.legend")
     .attr("width", width)
     .attr("height", height);
 
@@ -230,7 +270,7 @@ force.on("tick", function() {
   vis.selectAll("circle.node")
      .style("fill", function(d) {
           var color =  d.nodeName == me ?
-          "red" : ( isNeighbour(d.nodeName) ?  "green" : "blue");
+          colors.me : ( isNeighbour(d.nodeName) ?  colors.neighbour : colors.other);
           return color;
           })
      .attr("cx", function(d) { return xScale(d.x); })
@@ -368,7 +408,7 @@ var redisplay = function() {
         .attr("cy", function(d) { return yScale(d.y); })
         .attr("r", 5)
         .attr("stroke-width", "1.5px")
-        .attr("stroke", "#fff")
+        .attr("stroke", "white")
         .attr("id", function(d) {return "node-"+normalize_id(d.nodeName);})
         .each(function(d) {
             if(d.nodeName != babel.self.alamakota.id)
@@ -389,7 +429,7 @@ var redisplay = function() {
         .data(routes);
     route.enter().insert("svg:path", "circle.node")
         .attr("class", "route")
-        .attr("stroke", "#999")
+        .attr("stroke", colors.route)
         .attr("stroke-width", "1px")
         .attr("fill", "none")
         .attr("id", function(d) { return "link-"+normalize_id(d.key); })

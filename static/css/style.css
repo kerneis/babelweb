@@ -14,7 +14,10 @@ h2 { clear: both; }
         float: left;
 }
 
-td, th { font-family: monospace; padding: 0 1ex 0 1ex ;}
+td, th { font-family: monospace; padding: 0 1ex 0 1ex;}
+
+.legend { font-weight: bold; margin-right: 1em; }
+.legend-dot { margin: 0 1ex 0 1ex; }
 
 #route td:nth-child(2) { text-align: right; }
 #route td:nth-child(3) { text-align: right; }

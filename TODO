@@ -2,8 +2,6 @@
 * bug: highlight on some lines does not work (related to previous one?)
 * do not highlight unreachable routes
 * put route on top of the graph when highlighted
-* change route colors (installed, not installed, unreachable)
-* change neighbour colors (based on rxcost)
 * warn if txcost > 2*rxcost?
 * zoom with mouse wheel
 * resize graph automatically with window size
