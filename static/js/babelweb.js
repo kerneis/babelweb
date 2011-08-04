@@ -241,9 +241,10 @@ var recompute_network = function() {
     for (var route in babel.route) {
         var r = babel.route[route];
 
+        var metric = parseInt(r.metric, 10);
+        var refmetric = parseInt(r.refmetric, 10);
         /* Skip unreachable routers */
-        var r_metric = parseInt(r.metric, 10);
-        if(r_metric >= 65534) {
+        if(metric >= 65534) {
             continue;
         }
 
@@ -251,18 +252,18 @@ var recompute_network = function() {
             /* New router ID discovered */
             routers[r.id] = {
                 nodeName:r.id,
-                metric:r.metric,
-                refmetric:r.refmetric,
+                metric:metric,
+                refmetric:refmetric,
                 via:r.via,
             };
         } else {
-            if(r_metric < parseInt(routers[r.id].metric, 10)) {
-                routers[r.id].metric = r.metric;
-                routers[r.id].refmetric = r.refmetric;
+            if(metric < routers[r.id].metric) {
+                routers[r.id].metric = metric;
+                routers[r.id].refmetric = refmetric;
                 routers[r.id].via = r.via;
             }
         }
-        if(r.refmetric == 0) {
+        if(refmetric == 0) {
             /* This is a direct neighbour, we need
                to remember its address to set up
                indirect routes later */
@@ -308,14 +309,14 @@ var recompute_network = function() {
    routes = [];
    for (var r_key in babel.route) {
         var r = babel.route[r_key];
-        if(parseInt(routers[r.id].metric, 10) >= 65534) {
+        if(routers[r.id].metric >= 65534) {
             continue;
         }
         var route = {
             path: [ routers[me] ],
             key: r_key,
             route: r };
-        if(parseInt(routers[r.id].refmetric, 10) > 0) /* indirect route */
+        if(routers[r.id].refmetric > 0) /* indirect route */
             route.path.push(routers[addrToRouterId[r.via]]);
         route.path.push(routers[r.id]);
         routes.push(route);
