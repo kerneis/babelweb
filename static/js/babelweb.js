@@ -28,6 +28,7 @@ socket.on('message', function(message){
                 recompute_table("route");
                 d3.select("#route").selectAll("tr")
                     .on("mouseover", function(d) {
+                            if(typeof d == 'undefined') return; /* trap event bubbling */
                             var id = "#link-"+normalize_id(d.key);
                             d3.select(this).style("opacity","0.7");
                             d3.select(id)
@@ -36,6 +37,7 @@ socket.on('message', function(message){
                             // XXX put just before d3.select("circle.node")
                             })
                     .on("mouseout", function(d) {
+                            if(typeof d == 'undefined') return; /* trap event bubbling */
                             var id = "#link-"+normalize_id(d.key);
                             d3.select(this).style("opacity","");
                             d3.select(id)
@@ -46,15 +48,19 @@ socket.on('message', function(message){
                 recompute_table("neighbour");
                 d3.select("#neighbour").selectAll("tr")
                     .on("mouseover", function(d) {
-                            var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
+                            if(typeof d == 'undefined') return; /* trap event bubbling */
                             d3.select(this).style("opacity","0.7");
+                            if(typeof addrToRouterId[d.value.address] == 'undefined') return;
+                            var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
                             d3.select(id)
                               .attr("stroke","#f00")
                               .attr("r", "8");
                             })
                     .on("mouseout", function(d) {
-                            var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
+                            if(typeof d == 'undefined') return; /* trap event bubbling */
                             d3.select(this).style("opacity","");
+                            if(typeof addrToRouterId[d.value.address] == 'undefined') return;
+                            var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
                             d3.select(id)
                               .attr("stroke","#fff")
                               .attr("r", "5");
