@@ -256,8 +256,14 @@ var vis = d3.select("#fig")
 
 /* Compute a svg path from route data */
 var route_path = d3.svg.line()
-    .x(function(d) { return xScale(d.x); })
-    .y(function(d) { return yScale(d.y); })
+    .x(function(d) {
+        if(typeof d == 'undefined') return null; // XXX produces invalid svg path
+        else return xScale(d.x);
+        })
+    .y(function(d) {
+        if(typeof d == 'undefined') return null;
+        else return yScale(d.y);
+        })
     .interpolate("linear");
 
 var isNeighbour = function(id) {
