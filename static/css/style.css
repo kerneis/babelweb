@@ -15,6 +15,7 @@ h2 { clear: both; }
 }
 
 td, th { font-family: monospace; padding: 0 1ex 0 1ex;}
+td { white-space: nowrap; }
 
 .legend { font-weight: bold; margin-right: 1em; }
 .legend-dot { margin: 0 1ex 0 1ex; }
