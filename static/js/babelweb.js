@@ -310,17 +310,19 @@ var recompute_network = function() {
    routes = [];
    for (var r_key in babel.route) {
         var r = babel.route[r_key];
-        if(routers[r.id].metric >= 65534) {
+        if(typeof routers[r.id] == 'undefined')
             continue;
-        }
-        var route = {
-            path: [ routers[me] ],
+
+        routes.push({
+            path: [ routers[me]
+                 /* for neighbours, will be the same as next point:
+                  * this is fine. */
+               , routers[addrToRouterId[r.via]]
+               , routers[r.id]
+               ],
             key: r_key,
-            route: r };
-        if(routers[r.id].refmetric > 0) /* indirect route */
-            route.path.push(routers[addrToRouterId[r.via]]);
-        route.path.push(routers[r.id]);
-        routes.push(route);
+            route: r }
+            );
    }
 };
 
