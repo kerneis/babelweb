@@ -72,7 +72,8 @@ socket.on('message', function(message){
                 d3.select("#route").selectAll("tr")
                     .on("mouseover", function(d) {
                             if(typeof d == 'undefined') return; /* trap event bubbling */
-                            var id = "#link-"+normalize_id(d.key);
+                            var key = d.value.id + d.value.via + d.value.installed;
+                            var id = "#link-"+normalize_id(key);
                             d3.select(this).style("opacity","0.7");
                             d3.select(id)
                               .attr("stroke",colors.selected)
@@ -81,7 +82,8 @@ socket.on('message', function(message){
                             })
                     .on("mouseout", function(d) {
                             if(typeof d == 'undefined') return; /* trap event bubbling */
-                            var id = "#link-"+normalize_id(d.key);
+                            var key = d.value.id + d.value.via + d.value.installed;
+                            var id = "#link-"+normalize_id(key);
                             d3.select(this).style("opacity","");
                             d3.select(id)
                               .attr("stroke",colors.route)
@@ -280,12 +282,20 @@ force.on("tick", function() {
   vis.selectAll("path.route")
      .attr("stroke-opacity", function(d) {
         var show_all = d3.select("#show_all").property("checked");
-        return d.route.installed == "yes" ? 1 : (show_all ? 0.15 : 0);
+        return d.installed == "yes" ? 1 : (show_all ? 0.15 : 0);
         })
      .attr("d", function(d) { return route_path(d.path); });
 });
 
 /* Compute routers and metrics for the graph */
+function insertKey(arr, obj) {
+        for(var i=0; i<arr.length; i++) {
+                if (arr[i].key == obj.key) return arr;
+        }
+        arr.push(obj);
+        return arr;
+};
+
 var recompute_network = function() {
 
     var me = babel.self.alamakota.id;
@@ -378,15 +388,15 @@ var recompute_network = function() {
         if(typeof routers[r.id] == 'undefined')
             continue;
 
-        routes.push({
+        insertKey(routes, {
+            key: normalize_id(r.id + r.via + r.installed),
             path: [ routers[me]
                  /* for neighbours, will be the same as next point:
                   * this is fine. */
                , routers[addrToRouterId[r.via]]
                , routers[r.id]
                ],
-            key: r_key,
-            route: r }
+            installed: r.installed }
             );
    }
 };
@@ -433,7 +443,7 @@ var redisplay = function() {
         .attr("stroke", colors.route)
         .attr("stroke-width", "1px")
         .attr("fill", "none")
-        .attr("id", function(d) { return "link-"+normalize_id(d.key); })
+        .attr("id", function(d) { return "link-"+d.key; })
         .attr("d", function(d) { return route_path(d.path); });
     route.exit().remove();
 
