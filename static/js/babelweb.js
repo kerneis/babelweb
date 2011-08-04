@@ -171,10 +171,34 @@ var setZoomLevel = function(x, y) {
     force.size([w, h]);
 }
 
-var zoomIn = function(factor) { setZoomLevel(w / factor, h / factor); }
-var zoomOut = function(factor) { setZoomLevel(w * factor, h * factor); }
+var zoomOut = function(factor) {
+    setZoomLevel(w * factor, h * factor);
+    var nodes = force.nodes();
+    for(var d in nodes) {
+        nodes[d].x *= factor;
+        nodes[d].px *= factor;
+        nodes[d].y *= factor;
+        nodes[d].py *= factor;
+    };
+}
+var zoomIn = function(factor) { zoomOut(1/factor); }
 
 setZoomLevel(width, height);
+
+var randomizeNodes = function() {
+    var me = babel.self.alamakota.id;
+    d3.selectAll("circle.node")
+      .each(function(d) {
+          if(d == routers[me]) {
+              d.x = d.px = w/2;
+              d.y = d.py = h/2;
+          } else {
+              d.x = d.px = undefined;
+              d.y = d.py = undefined;
+          }
+      });
+    redisplay();
+}
 
 var vis = d3.select("#fig")
     .append("svg:svg")
