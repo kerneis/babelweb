@@ -238,7 +238,7 @@ var zoomOut = function(factor) {
 }
 var zoomIn = function(factor) { zoomOut(1/factor); }
 
-setZoomLevel(width * 2, height * 2);
+setZoomLevel(450, 400);
 
 var randomizeNodes = function() {
     var me = babel.self.alamakota.id;
@@ -414,12 +414,15 @@ var recompute_network = function() {
 };
 
 var redisplay = function() {
+
+    var scale = d3.select("#logscale").property("checked") ?
+        d3.scale.log().domain([1,65535]).range([0,500]) :
+        d3.scale.linear().domain([0,65535]).range([0,10000]);
+
+
     /* Restart simulation with new values */    
     force.nodes(nodes).links(metrics);
-    force.linkDistance(function(d) { return d.metric; });
-    /* There is a race here: we start simulating before
-       updating the display, but otherwise we would try to display objects
-       which have no coordinates yet! */
+    force.linkDistance(function(d) { return scale(d.metric); });
     force.start(); 
 
     /* Display routers */
