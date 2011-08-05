@@ -82,8 +82,8 @@ socket.on('message', function(message){
                             var id = "#link-"+normalize_id(key);
                             d3.select(this).style("opacity","0.7");
                             d3.select(id)
-                              .attr("stroke",colors.selected)
-                              .attr("stroke-width", "3px");
+                              .attr("stroke", colors.selected)
+                              .attr("stroke-width", "5px");
                             // XXX put just before d3.select("circle.node")
                             })
                     .on("mouseout", function(d) {
@@ -92,8 +92,8 @@ socket.on('message', function(message){
                             var id = "#link-"+normalize_id(key);
                             d3.select(this).style("opacity","");
                             d3.select(id)
-                              .attr("stroke",colors.route)
-                              .attr("stroke-width", "1px");
+                              .attr("stroke", colors.route)
+                              .attr("stroke-width", "");
                             });
                 /* Neighbours table */
                 recompute_table("neighbour");
@@ -258,7 +258,8 @@ var randomizeNodes = function() {
 var vis = d3.select("#fig")
     .insert("svg:svg", "span.legend")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("stroke-width", "1.5px");
 
 /* Compute a svg path from route data */
 var route_path = d3.svg.line()
@@ -291,11 +292,11 @@ force.on("tick", function() {
      .attr("cx", function(d) { return xScale(d.x); })
      .attr("cy", function(d) { return yScale(d.y); });
 
+  var show_all = d3.select("#show_all").property("checked");
   vis.selectAll("path.route")
-     .attr("stroke-opacity", function(d) {
-        var show_all = d3.select("#show_all").property("checked");
-        return d.installed == "yes" ? 1 : (show_all ? 0.15 : 0);
-        })
+     .attr("display", function(d) { return d.installed == "yes" || show_all ? "inline" : "none"; })
+     .attr("opacity", function(d) { return d.installed == "yes" ? "1" : "0.3"; })
+     .attr("stroke-dasharray", function(d) { return d.installed == "yes" ? "none" : "5,2"; })
      .attr("d", function(d) { return route_path(d.path); });
 });
 
@@ -429,7 +430,6 @@ var redisplay = function() {
         .attr("cx", function(d) { return xScale(d.x); })
         .attr("cy", function(d) { return yScale(d.y); })
         .attr("r", 5)
-        .attr("stroke-width", "1.5px")
         .attr("stroke", "white")
         .attr("id", function(d) {return "node-"+normalize_id(d.nodeName);})
         .each(function(d) {
@@ -452,7 +452,6 @@ var redisplay = function() {
     route.enter().insert("svg:path", "circle.node")
         .attr("class", "route")
         .attr("stroke", colors.route)
-        .attr("stroke-width", "1px")
         .attr("fill", "none")
         .attr("id", function(d) { return "link-"+d.key; })
         .attr("d", function(d) { return route_path(d.path); });
