@@ -1,10 +1,4 @@
-* bug: old lines left in route tables
-* bug: highlight on some lines does not work (related to previous one?)
-* remove work around for babelz bug?
-* do not highlight unreachable routes
-* change route colors (installed, not installed, unreachable)
-* change neighbour colors (based on rxcost)
+* put route on top of the graph when highlighted
 * warn if txcost > 2*rxcost?
-* zoom with mouse wheel
-* do not randomize on zoom (hard to do)
+* zoom with mouse wheel: too complicated (wait for next d3 release?)
 * resize graph automatically with window size

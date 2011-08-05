@@ -110,7 +110,7 @@ io.sockets.on('connection', function(client){
 
 setInterval(function() {
     if(needUpdate) {
-        io.sockets.send(formatMessage());
+        io.sockets.volatile.send(formatMessage());
         needUpdate = false;
     }
 }, config.updateIval);

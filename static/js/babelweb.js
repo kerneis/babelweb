@@ -9,13 +9,62 @@ var addrToRouterId = {}; /* Associate address to router id, for neighbours */
    the layout. */
 var nodes = [], metrics = [], routes = [];
 
+/* Colors */
+var palette = {
+      "gray" : "#777"
+    , "lightGray" : "#ddd"
+    , "blue" : "#03f"
+    , "violet" : "#c0f"
+    , "pink" : "#f69"
+    , "green" : "#4d4"
+    , "lightGreen" : "#8e8"
+    , "yellow" : "#ff0"
+    , "orange" : "#f90"
+    , "red" : "#f30"
+}
+var colors = {
+      installed: palette.green
+    , uninstalled: palette.lightGreen
+    , unreachable: palette.lightGray
+    , wiredLink: palette.yellow
+    , losslessWireless: palette.orange
+    , unreachableNeighbour: palette.red
+    , me: palette.pink
+    , neighbour: palette.violet
+    , other: palette.blue
+    , selected: palette.blue
+    , route: palette.gray
+}
+
+for(id in colors) {
+    d3.selectAll(".legend-"+id)
+        .append("svg:svg")
+        .attr("width", 10)
+        .attr("height", 10)
+        .attr("class", "legend-dot")
+        .append("svg:circle")
+        .attr("cx", 5).attr("cy", 5).attr("r", 5)
+        .attr("stroke-width", 0)
+        .attr("fill",colors[id]);
+}
+
+var costColor = d3.scale.log()
+    .domain([0, 96, 256, 65535])
+    .range([colors.wiredLink,
+            colors.wiredLink,
+            colors.losslessWireless,
+            colors.unreachableNeighbour]);
+
 /* socket.io server */
 var socket = io.connect();
 
 /* Update status message */
 var update_status = function(msg, good) {
         d3.select("#state").text(msg);
-        d3.select("#state").classed("bad", !good).classed("good", good);
+        if(good)
+            d3.select("#state").style("background-color", palette.green);
+        else
+            d3.select("#state").style("background-color", palette.red);
 }
 socket.on('connect', function() { update_status("connected", true); });
 socket.on('disconnect', function() { update_status("disconnected", false); });
@@ -28,35 +77,47 @@ socket.on('message', function(message){
                 recompute_table("route");
                 d3.select("#route").selectAll("tr")
                     .on("mouseover", function(d) {
-                            var id = "#link-"+normalize_id(d.key);
+                            if(typeof d == 'undefined') return; /* trap event bubbling */
                             d3.select(this).style("opacity","0.7");
+                            if(d.value.metric == "65535") return;
+                            var key = d.value.id + d.value.via + d.value.installed;
+                            var id = "#link-"+normalize_id(key);
                             d3.select(id)
-                              .attr("stroke","#f00")
-                              .attr("stroke-width", "3px");
+                              .attr("stroke", colors.selected)
+                              .attr("stroke-width", "5px");
                             // XXX put just before d3.select("circle.node")
                             })
                     .on("mouseout", function(d) {
-                            var id = "#link-"+normalize_id(d.key);
+                            if(typeof d == 'undefined') return; /* trap event bubbling */
+                            // No metric check on purpose: try torestore even
+                            // retracted routes, in case of it went off during
+                            // mouseover.
+                            var key = d.value.id + d.value.via + d.value.installed;
+                            var id = "#link-"+normalize_id(key);
                             d3.select(this).style("opacity","");
                             d3.select(id)
-                              .attr("stroke","#999")
-                              .attr("stroke-width", "1px");
+                              .attr("stroke", colors.route)
+                              .attr("stroke-width", "");
                             });
                 /* Neighbours table */
                 recompute_table("neighbour");
                 d3.select("#neighbour").selectAll("tr")
                     .on("mouseover", function(d) {
-                            var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
+                            if(typeof d == 'undefined') return; /* trap event bubbling */
                             d3.select(this).style("opacity","0.7");
+                            if(typeof addrToRouterId[d.value.address] == 'undefined') return;
+                            var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
                             d3.select(id)
-                              .attr("stroke","#f00")
+                              .attr("stroke",colors.selected)
                               .attr("r", "8");
                             })
                     .on("mouseout", function(d) {
-                            var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
+                            if(typeof d == 'undefined') return; /* trap event bubbling */
                             d3.select(this).style("opacity","");
+                            if(typeof addrToRouterId[d.value.address] == 'undefined') return;
+                            var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
                             d3.select(id)
-                              .attr("stroke","#fff")
+                              .attr("stroke","white")
                               .attr("r", "5");
                             });
                 /* Exported routes tables */
@@ -104,16 +165,13 @@ var recompute_table = function(name) {
                  tr.transition()
                    .duration(1000)
                    .style("background-color",
-                                 d.value.installed == "yes"?
-                                 "#CAFF70":"#FF7256");
+                                 (d.value.metric == "65535" ? colors.unreachable :
+                                 d.value.installed == "yes" ? colors.installed :
+                                 colors.uninstalled));
             else if(name == "neighbour") {
-                 var color = d3.scale.linear()
-                               .domain([0, 16])
-                               .range(["#FF7256","#CAFF70"]);
                  tr.transition()
                    .duration(1000)
-                   .style("background-color", color(
-                                 bitCount(parseInt(d.value.reach, 16))));
+                   .style("background-color", costColor(parseInt(d.value.rxcost, 10)));
             }
             var row = tr.selectAll("td")
               .data(headers.map(function(h){return d.value[h];}));
@@ -163,6 +221,7 @@ var count = function(name) {
 var width = 600, height = 400; /* display size */
 var w, h, xScale, yScale ;     /* virtual size */
 var force = d3.layout.force(); /* force to coerce nodes */
+force.charge(-1000); /* stronger repulsion enhances graph */
 
 var setZoomLevel = function(x, y) {
     w = x; h = y;
@@ -171,20 +230,51 @@ var setZoomLevel = function(x, y) {
     force.size([w, h]);
 }
 
-var zoomIn = function(factor) { setZoomLevel(w / factor, h / factor); }
-var zoomOut = function(factor) { setZoomLevel(w * factor, h * factor); }
+var zoomOut = function(factor) {
+    setZoomLevel(w * factor, h * factor);
+    var nodes = force.nodes();
+    for(var d in nodes) {
+        nodes[d].x *= factor;
+        nodes[d].px *= factor;
+        nodes[d].y *= factor;
+        nodes[d].py *= factor;
+    };
+}
+var zoomIn = function(factor) { zoomOut(1/factor); }
 
-setZoomLevel(width, height);
+setZoomLevel(450, 400);
+
+var randomizeNodes = function() {
+    var me = babel.self.alamakota.id;
+    d3.selectAll("circle.node")
+      .each(function(d) {
+          if(d == routers[me]) {
+              d.x = d.px = w/2;
+              d.y = d.py = h/2;
+          } else {
+              d.x = d.px = undefined;
+              d.y = d.py = undefined;
+          }
+      });
+    redisplay();
+}
 
 var vis = d3.select("#fig")
-    .append("svg:svg")
+    .insert("svg:svg", ".legend")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("stroke-width", "1.5px");
 
 /* Compute a svg path from route data */
 var route_path = d3.svg.line()
-    .x(function(d) { return xScale(d.x); })
-    .y(function(d) { return yScale(d.y); })
+    .x(function(d) {
+        if(typeof d == 'undefined') return null; // XXX produces invalid svg path
+        else return xScale(d.x);
+        })
+    .y(function(d) {
+        if(typeof d == 'undefined') return null;
+        else return yScale(d.y);
+        })
     .interpolate("linear");
 
 var isNeighbour = function(id) {
@@ -200,21 +290,29 @@ force.on("tick", function() {
   vis.selectAll("circle.node")
      .style("fill", function(d) {
           var color =  d.nodeName == me ?
-          "red" : ( isNeighbour(d.nodeName) ?  "green" : "blue");
+          colors.me : ( isNeighbour(d.nodeName) ?  colors.neighbour : colors.other);
           return color;
           })
      .attr("cx", function(d) { return xScale(d.x); })
      .attr("cy", function(d) { return yScale(d.y); });
 
+  var show_all = d3.select("#show_all").property("checked");
   vis.selectAll("path.route")
-     .attr("stroke-opacity", function(d) {
-        var show_all = d3.select("#show_all").property("checked");
-        return d.route.installed == "yes" ? 1 : (show_all ? 0.15 : 0);
-        })
+     .attr("display", function(d) { return (d.installed == "yes" && d.metric != "65535") || show_all ? "inline" : "none"; })
+     .attr("opacity", function(d) { return d.installed == "yes" ? "1" : "0.3"; })
+     .attr("stroke-dasharray", function(d) { return d.installed == "yes" ? "none" : "5,2"; })
      .attr("d", function(d) { return route_path(d.path); });
 });
 
 /* Compute routers and metrics for the graph */
+function insertKey(arr, obj) {
+        for(var i=0; i<arr.length; i++) {
+                if (arr[i].key == obj.key) return arr;
+        }
+        arr.push(obj);
+        return arr;
+};
+
 var recompute_network = function() {
 
     var me = babel.self.alamakota.id;
@@ -232,103 +330,101 @@ var recompute_network = function() {
 
     /* Reset minimal metrics for known routers */
     for (var r in routers) {
-        routers[r].metric = 65535;
+        routers[r].metric = undefined;
     }
     routers[me].metric = 0;
 
-    /* Collect routers, with the minimal metric to reach them */
-    addrToRouterId = {};
+    /* Collect:
+       - routers, with the minimal metric to reach them from me,
+       - neighbours, with the minimal metric to every router */
+    var neighToRouterMetric = {};
     for (var route in babel.route) {
         var r = babel.route[route];
 
-        /* Skip unreachable routers */
-        var r_metric = parseInt(r.metric, 10);
-        if(r_metric >= 65534) {
-            continue;
-        }
+        var metric = parseInt(r.metric, 10);
+        var refmetric = parseInt(r.refmetric, 10);
 
         if(!routers[r.id]) {
             /* New router ID discovered */
             routers[r.id] = {
                 nodeName:r.id,
-                metric:r.metric,
-                refmetric:r.refmetric,
+                metric:metric,
                 via:r.via,
             };
         } else {
-            if(r_metric < parseInt(routers[r.id].metric, 10)) {
-                routers[r.id].metric = r.metric;
-                routers[r.id].refmetric = r.refmetric;
+            if(routers[r.id].metric == undefined || metric < routers[r.id].metric) {
+                routers[r.id].metric = metric;
                 routers[r.id].via = r.via;
             }
         }
-        if(r.refmetric == 0) {
-            /* This is a direct neighbour, we need
-               to remember its address to set up
-               indirect routes later */
-            if(typeof addrToRouterId[r.via] != 'undefined' &&
-                            addrToRouterId[r.via] != r.id) {
-                    d3.select("#msg").text("unexpected collision in router id computation");
-                    /* Prefer installed routes in that case */
-                    if(r.installed == "yes") addrToRouterId[r.via] = r.id;
-            } else {
-                    addrToRouterId[r.via] = r.id;
-            }
-        }
+
+        if(!neighToRouterMetric[r.via])
+            neighToRouterMetric[r.via] = {};
+        if(!neighToRouterMetric[r.via][r.id])
+            neighToRouterMetric[r.via][r.id] = { refmetric: refmetric };
+        else
+            neighToRouterMetric[r.via][r.id].refmetric = Math.min(neighToRouterMetric[r.via][r.id].refmetric, refmetric);
     }
+    /* Assume that the router id of a neighbour is the id of the
+     * router annoucing the shortest route to this neighbour.
+     * (This is a hack, a neighbour might hide routes to itself.) */
+    addrToRouterId = {};
+    for(var n in neighToRouterMetric) {
+            addrToRouterId[n] = d3.first(d3.entries(neighToRouterMetric[n]), function(a, b) {
+            return a.value.refmetric < b.value.refmetric ? -1 : a.value.refmetric > b.value.refmetric ? 1 : 0;
+            }).key;
+    }
+
     /* Populate nodes and metrics */
     nodes = []; metrics = [];
     for (var r in routers) {
-        if(routers[r].metric == 65535)
-            /* oops, router vanished! */
-            delete routers[r];
+        if(routers[r].metric == undefined)
+            delete routers[r]; // Safe to delete: no route contains it
         else {
-            nodes.push(routers[r]);
-            if(routers[r].refmetric == 0) {
-                metrics.push({source:routers[me],
-                        target:routers[r],
-                        metric:routers[r].metric,
-                        });
-            }
-            else if(r != me) {
-                metrics.push({source:routers[addrToRouterId[routers[r].via]],
-                        target:routers[r],
-                        metric:routers[r].refmetric,
-                        });
-                /* This is not a route, but we add a link
-                   to enforce a more realistic structure */
-                metrics.push({source:routers[me],
-                        target:routers[r],
-                        metric:routers[r].metric,
-                        });
-            }
+           nodes.push(routers[r]);
+           metrics.push({source:routers[me],
+                           target:routers[r],
+                           metric:routers[r].metric,
+                           });
         }
     }
+    for (var n in neighToRouterMetric)
+        for(var id in neighToRouterMetric[n])
+                metrics.push({source:routers[addrToRouterId[n]],
+                                target:routers[id],
+                                metric:neighToRouterMetric[n][id].refmetric
+                                });
+
    /* Build a list of routes to display */
    routes = [];
    for (var r_key in babel.route) {
         var r = babel.route[r_key];
-        if(parseInt(routers[r.id].metric, 10) >= 65534) {
+        if(r.metric == "65535") // do not display retracted routes
             continue;
-        }
-        var route = {
-            path: [ routers[me] ],
-            key: r_key,
-            route: r };
-        if(parseInt(routers[r.id].refmetric, 10) > 0) /* indirect route */
-            route.path.push(routers[addrToRouterId[r.via]]);
-        route.path.push(routers[r.id]);
-        routes.push(route);
+
+        insertKey(routes, {
+            key: normalize_id(r.id + r.via + r.installed),
+            path: [ routers[me]
+                 /* for neighbours, will be the same as next point:
+                  * this is fine. */
+               , routers[addrToRouterId[r.via]]
+               , routers[r.id]
+               ],
+            installed: r.installed }
+            );
    }
 };
 
 var redisplay = function() {
+
+    var scale = d3.select("#logscale").property("checked") ?
+        d3.scale.log().domain([1,65535]).range([0,500]) :
+        d3.scale.linear().domain([0,65535]).range([0,10000]);
+
+
     /* Restart simulation with new values */    
     force.nodes(nodes).links(metrics);
-    force.linkDistance(function(d) { return d.metric; });
-    /* There is a race here: we start simulating before
-       updating the display, but otherwise we would try to display objects
-       which have no coordinates yet! */
+    force.linkDistance(function(d) { return scale(d.metric); });
     force.start(); 
 
     /* Display routers */
@@ -339,27 +435,30 @@ var redisplay = function() {
         .attr("cx", function(d) { return xScale(d.x); })
         .attr("cy", function(d) { return yScale(d.y); })
         .attr("r", 5)
-        .attr("stroke-width", "1.5px")
-        .attr("stroke", "#fff")
+        .attr("stroke", "white")
         .attr("id", function(d) {return "node-"+normalize_id(d.nodeName);})
         .each(function(d) {
             if(d.nodeName != babel.self.alamakota.id)
                 d3.select(this).call(force.drag);
-                });
+                })
+        .append("svg:title");
     node.exit().remove();
 
-    node.append("svg:title")
-        .text(function(d) { return d.nodeName + " (metric: "+d.metric+")"; });
+    /* update metric in node title */
+    vis.selectAll("circle.node").each(function(d) {
+        d3.select(this).select("title")
+          .text(d.nodeName + " (metric: "+d.metric+")");
+
+    });
  
     /* Display routes */
     var route = vis.selectAll("path.route")
         .data(routes);
     route.enter().insert("svg:path", "circle.node")
         .attr("class", "route")
-        .attr("stroke", "#999")
-        .attr("stroke-width", "1px")
+        .attr("stroke", colors.route)
         .attr("fill", "none")
-        .attr("id", function(d) { return "link-"+normalize_id(d.key); })
+        .attr("id", function(d) { return "link-"+d.key; })
         .attr("d", function(d) { return route_path(d.path); });
     route.exit().remove();
 
