@@ -384,17 +384,16 @@ var recompute_network = function() {
     }
     for (var n in neighToRouterMetric)
         for(var id in neighToRouterMetric[n])
-            if(neighToRouterMetric[n][id].refmetric < 65535) // Do not display retracted routes
-                    metrics.push({source:routers[addrToRouterId[n]],
-                                    target:routers[id],
-                                    metric:neighToRouterMetric[n][id].refmetric
-                                    });
+                metrics.push({source:routers[addrToRouterId[n]],
+                                target:routers[id],
+                                metric:neighToRouterMetric[n][id].refmetric
+                                });
 
    /* Build a list of routes to display */
    routes = [];
    for (var r_key in babel.route) {
         var r = babel.route[r_key];
-        if(typeof routers[r.id] == 'undefined')
+        if(r.metric == "65535") // do not display retracted routes
             continue;
 
         insertKey(routes, {
