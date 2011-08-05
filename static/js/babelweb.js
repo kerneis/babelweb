@@ -11,27 +11,28 @@ var nodes = [], metrics = [], routes = [];
 
 /* Colors */
 var palette = {
-      "green": "#00B000"
-    , "lightGreen": "#66F26A"
-    , "red": "#CC0000"
-    , "blue": "#24A7FF"
-    , "yellow": "#FFFF00"
-    , "lightYellow": "#FAFF75"
-    , "gray": "#CCCCCC"
-    , "darkBlue": "#000070"
-    , "darkGreen": "#116600"
-    , "darkRed": "#BD0000"
+      "gray" : "#777"
+    , "lightGray" : "#ddd"
+    , "blue" : "#03f"
+    , "violet" : "#c0f"
+    , "pink" : "#f69"
+    , "green" : "#4d4"
+    , "lightGreen" : "#8e8"
+    , "yellow" : "#ff0"
+    , "orange" : "#f90"
+    , "red" : "#f30"
 }
 var colors = {
-      installed: palette.yellow
-    , uninstalled: palette.lightYellow
-    , unreachable: palette.red
-    , wiredLink: palette.blue
-    , losslessWireless: palette.green
-    , me: palette.darkRed
-    , neighbour: palette.darkGreen
-    , other: palette.darkBlue
-    , selected: palette.red
+      installed: palette.green
+    , uninstalled: palette.lightGreen
+    , unreachable: palette.lightGray
+    , wiredLink: palette.yellow
+    , losslessWireless: palette.orange
+    , unreachableNeighbour: palette.red
+    , me: palette.pink
+    , neighbour: palette.violet
+    , other: palette.blue
+    , selected: palette.blue
     , route: palette.gray
 }
 
@@ -52,7 +53,7 @@ var costColor = d3.scale.log()
     .range([colors.wiredLink,
             colors.wiredLink,
             colors.losslessWireless,
-            colors.unreachable]);
+            colors.unreachableNeighbour]);
 
 /* socket.io server */
 var socket = io.connect();
