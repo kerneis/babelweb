@@ -11,27 +11,28 @@ var nodes = [], metrics = [], routes = [];
 
 /* Colors */
 var palette = {
-      "green": "#00B000"
-    , "lightGreen": "#66F26A"
-    , "red": "#CC0000"
-    , "blue": "#24A7FF"
-    , "yellow": "#FFFF00"
-    , "lightYellow": "#FAFF75"
-    , "gray": "#CCCCCC"
-    , "darkBlue": "#000070"
-    , "darkGreen": "#116600"
-    , "darkRed": "#BD0000"
+      "gray" : "#777"
+    , "lightGray" : "#ddd"
+    , "blue" : "#03f"
+    , "violet" : "#c0f"
+    , "pink" : "#f69"
+    , "green" : "#4d4"
+    , "lightGreen" : "#8e8"
+    , "yellow" : "#ff0"
+    , "orange" : "#f90"
+    , "red" : "#f30"
 }
 var colors = {
-      installed: palette.yellow
-    , uninstalled: palette.lightYellow
-    , unreachable: palette.red
-    , wiredLink: palette.blue
-    , losslessWireless: palette.green
-    , me: palette.darkRed
-    , neighbour: palette.darkGreen
-    , other: palette.darkBlue
-    , selected: palette.red
+      installed: palette.green
+    , uninstalled: palette.lightGreen
+    , unreachable: palette.lightGray
+    , wiredLink: palette.yellow
+    , losslessWireless: palette.orange
+    , unreachableNeighbour: palette.red
+    , me: palette.pink
+    , neighbour: palette.violet
+    , other: palette.blue
+    , selected: palette.blue
     , route: palette.gray
 }
 
@@ -52,7 +53,7 @@ var costColor = d3.scale.log()
     .range([colors.wiredLink,
             colors.wiredLink,
             colors.losslessWireless,
-            colors.unreachable]);
+            colors.unreachableNeighbour]);
 
 /* socket.io server */
 var socket = io.connect();
@@ -77,22 +78,26 @@ socket.on('message', function(message){
                 d3.select("#route").selectAll("tr")
                     .on("mouseover", function(d) {
                             if(typeof d == 'undefined') return; /* trap event bubbling */
+                            d3.select(this).style("opacity","0.7");
+                            if(d.value.metric == "65535") return;
                             var key = d.value.id + d.value.via + d.value.installed;
                             var id = "#link-"+normalize_id(key);
-                            d3.select(this).style("opacity","0.7");
                             d3.select(id)
-                              .attr("stroke",colors.selected)
-                              .attr("stroke-width", "3px");
+                              .attr("stroke", colors.selected)
+                              .attr("stroke-width", "5px");
                             // XXX put just before d3.select("circle.node")
                             })
                     .on("mouseout", function(d) {
                             if(typeof d == 'undefined') return; /* trap event bubbling */
+                            // No metric check on purpose: try torestore even
+                            // retracted routes, in case of it went off during
+                            // mouseover.
                             var key = d.value.id + d.value.via + d.value.installed;
                             var id = "#link-"+normalize_id(key);
                             d3.select(this).style("opacity","");
                             d3.select(id)
-                              .attr("stroke",colors.route)
-                              .attr("stroke-width", "1px");
+                              .attr("stroke", colors.route)
+                              .attr("stroke-width", "");
                             });
                 /* Neighbours table */
                 recompute_table("neighbour");
@@ -160,9 +165,9 @@ var recompute_table = function(name) {
                  tr.transition()
                    .duration(1000)
                    .style("background-color",
-                                 d.value.installed == "yes" ?
-                                 colors.installed : (d.value.metric != "65535" ?
-                                 colors.uninstalled : colors.unreachable));
+                                 (d.value.metric == "65535" ? colors.unreachable :
+                                 d.value.installed == "yes" ? colors.installed :
+                                 colors.uninstalled));
             else if(name == "neighbour") {
                  tr.transition()
                    .duration(1000)
@@ -216,7 +221,7 @@ var count = function(name) {
 var width = 600, height = 400; /* display size */
 var w, h, xScale, yScale ;     /* virtual size */
 var force = d3.layout.force(); /* force to coerce nodes */
-force.charge(-200); /* stronger repulsion enhances graph */
+force.charge(-1000); /* stronger repulsion enhances graph */
 
 var setZoomLevel = function(x, y) {
     w = x; h = y;
@@ -237,7 +242,7 @@ var zoomOut = function(factor) {
 }
 var zoomIn = function(factor) { zoomOut(1/factor); }
 
-setZoomLevel(width * 2, height * 2);
+setZoomLevel(450, 400);
 
 var randomizeNodes = function() {
     var me = babel.self.alamakota.id;
@@ -255,9 +260,10 @@ var randomizeNodes = function() {
 }
 
 var vis = d3.select("#fig")
-    .insert("svg:svg", "span.legend")
+    .insert("svg:svg", ".legend")
     .attr("width", width)
-    .attr("height", height);
+    .attr("height", height)
+    .attr("stroke-width", "1.5px");
 
 /* Compute a svg path from route data */
 var route_path = d3.svg.line()
@@ -290,11 +296,11 @@ force.on("tick", function() {
      .attr("cx", function(d) { return xScale(d.x); })
      .attr("cy", function(d) { return yScale(d.y); });
 
+  var show_all = d3.select("#show_all").property("checked");
   vis.selectAll("path.route")
-     .attr("stroke-opacity", function(d) {
-        var show_all = d3.select("#show_all").property("checked");
-        return d.installed == "yes" ? 1 : (show_all ? 0.15 : 0);
-        })
+     .attr("display", function(d) { return (d.installed == "yes" && d.metric != "65535") || show_all ? "inline" : "none"; })
+     .attr("opacity", function(d) { return d.installed == "yes" ? "1" : "0.3"; })
+     .attr("stroke-dasharray", function(d) { return d.installed == "yes" ? "none" : "5,2"; })
      .attr("d", function(d) { return route_path(d.path); });
 });
 
@@ -410,12 +416,15 @@ var recompute_network = function() {
 };
 
 var redisplay = function() {
+
+    var scale = d3.select("#logscale").property("checked") ?
+        d3.scale.log().domain([1,65535]).range([0,500]) :
+        d3.scale.linear().domain([0,65535]).range([0,10000]);
+
+
     /* Restart simulation with new values */    
     force.nodes(nodes).links(metrics);
-    force.linkDistance(function(d) { return d.metric; });
-    /* There is a race here: we start simulating before
-       updating the display, but otherwise we would try to display objects
-       which have no coordinates yet! */
+    force.linkDistance(function(d) { return scale(d.metric); });
     force.start(); 
 
     /* Display routers */
@@ -426,7 +435,6 @@ var redisplay = function() {
         .attr("cx", function(d) { return xScale(d.x); })
         .attr("cy", function(d) { return yScale(d.y); })
         .attr("r", 5)
-        .attr("stroke-width", "1.5px")
         .attr("stroke", "white")
         .attr("id", function(d) {return "node-"+normalize_id(d.nodeName);})
         .each(function(d) {
@@ -449,7 +457,6 @@ var redisplay = function() {
     route.enter().insert("svg:path", "circle.node")
         .attr("class", "route")
         .attr("stroke", colors.route)
-        .attr("stroke-width", "1px")
         .attr("fill", "none")
         .attr("id", function(d) { return "link-"+d.key; })
         .attr("d", function(d) { return route_path(d.path); });
