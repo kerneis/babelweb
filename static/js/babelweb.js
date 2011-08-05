@@ -324,7 +324,7 @@ var recompute_network = function() {
 
     /* Reset minimal metrics for known routers */
     for (var r in routers) {
-        routers[r].metric = 65535;
+        routers[r].metric = undefined;
     }
     routers[me].metric = 0;
 
@@ -346,7 +346,7 @@ var recompute_network = function() {
                 via:r.via,
             };
         } else {
-            if(metric < routers[r.id].metric) {
+            if(routers[r.id].metric == undefined || metric < routers[r.id].metric) {
                 routers[r.id].metric = metric;
                 routers[r.id].via = r.via;
             }
@@ -372,8 +372,8 @@ var recompute_network = function() {
     /* Populate nodes and metrics */
     nodes = []; metrics = [];
     for (var r in routers) {
-        if(routers[r].metric == 65535)
-            continue; // Do not display unreachable routers
+        if(routers[r].metric == undefined)
+            delete routers[r]; // Safe to delete: no route contains it
         else {
            nodes.push(routers[r]);
            metrics.push({source:routers[me],
