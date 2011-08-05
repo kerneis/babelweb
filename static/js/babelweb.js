@@ -161,7 +161,7 @@ var recompute_table = function(name) {
                    .duration(1000)
                    .style("background-color",
                                  d.value.installed == "yes" ?
-                                 colors.installed : (parseInt(d.value.metric, 10) < 65535 ?
+                                 colors.installed : (d.value.metric != "65535" ?
                                  colors.uninstalled : colors.unreachable));
             else if(name == "neighbour") {
                  tr.transition()
@@ -324,7 +324,7 @@ var recompute_network = function() {
 
     /* Reset minimal metrics for known routers */
     for (var r in routers) {
-        routers[r].metric = 65535;
+        routers[r].metric = undefined;
     }
     routers[me].metric = 0;
 
@@ -346,7 +346,7 @@ var recompute_network = function() {
                 via:r.via,
             };
         } else {
-            if(metric < routers[r.id].metric) {
+            if(routers[r.id].metric == undefined || metric < routers[r.id].metric) {
                 routers[r.id].metric = metric;
                 routers[r.id].via = r.via;
             }
@@ -372,9 +372,8 @@ var recompute_network = function() {
     /* Populate nodes and metrics */
     nodes = []; metrics = [];
     for (var r in routers) {
-        if(routers[r].metric == 65535)
-            /* oops, router vanished! */
-            delete routers[r];
+        if(routers[r].metric == undefined)
+            delete routers[r]; // Safe to delete: no route contains it
         else {
            nodes.push(routers[r]);
            metrics.push({source:routers[me],
@@ -385,17 +384,16 @@ var recompute_network = function() {
     }
     for (var n in neighToRouterMetric)
         for(var id in neighToRouterMetric[n])
-            if(neighToRouterMetric[n][id].refmetric < 65535) // Do not display retracted routes
-                    metrics.push({source:routers[addrToRouterId[n]],
-                                    target:routers[id],
-                                    metric:neighToRouterMetric[n][id].refmetric
-                                    });
+                metrics.push({source:routers[addrToRouterId[n]],
+                                target:routers[id],
+                                metric:neighToRouterMetric[n][id].refmetric
+                                });
 
    /* Build a list of routes to display */
    routes = [];
    for (var r_key in babel.route) {
         var r = babel.route[r_key];
-        if(typeof routers[r.id] == 'undefined')
+        if(r.metric == "65535") // do not display retracted routes
             continue;
 
         insertKey(routes, {
