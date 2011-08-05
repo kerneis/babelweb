@@ -1,4 +1,3 @@
-* do not highlight unreachable routes
 * put route on top of the graph when highlighted
 * warn if txcost > 2*rxcost?
 * zoom with mouse wheel: too complicated (wait for next d3 release?)
