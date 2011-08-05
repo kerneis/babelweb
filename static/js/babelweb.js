@@ -373,8 +373,7 @@ var recompute_network = function() {
     nodes = []; metrics = [];
     for (var r in routers) {
         if(routers[r].metric == 65535)
-            /* oops, router vanished! */
-            delete routers[r];
+            continue; // Do not display unreachable routers
         else {
            nodes.push(routers[r]);
            metrics.push({source:routers[me],
