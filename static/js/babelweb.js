@@ -78,9 +78,10 @@ socket.on('message', function(message){
                 d3.select("#route").selectAll("tr")
                     .on("mouseover", function(d) {
                             if(typeof d == 'undefined') return; /* trap event bubbling */
+                            d3.select(this).style("opacity","0.7");
+                            if(d.value.metric == "65535") return;
                             var key = d.value.id + d.value.via + d.value.installed;
                             var id = "#link-"+normalize_id(key);
-                            d3.select(this).style("opacity","0.7");
                             d3.select(id)
                               .attr("stroke", colors.selected)
                               .attr("stroke-width", "5px");
@@ -88,6 +89,9 @@ socket.on('message', function(message){
                             })
                     .on("mouseout", function(d) {
                             if(typeof d == 'undefined') return; /* trap event bubbling */
+                            // No metric check on purpose: try torestore even
+                            // retracted routes, in case of it went off during
+                            // mouseover.
                             var key = d.value.id + d.value.via + d.value.installed;
                             var id = "#link-"+normalize_id(key);
                             d3.select(this).style("opacity","");
@@ -161,9 +165,9 @@ var recompute_table = function(name) {
                  tr.transition()
                    .duration(1000)
                    .style("background-color",
-                                 d.value.installed == "yes" ?
-                                 colors.installed : (parseInt(d.value.metric, 10) < 65535 ?
-                                 colors.uninstalled : colors.unreachable));
+                                 (d.value.metric == "65535" ? colors.unreachable :
+                                 d.value.installed == "yes" ? colors.installed :
+                                 colors.uninstalled));
             else if(name == "neighbour") {
                  tr.transition()
                    .duration(1000)
@@ -294,7 +298,7 @@ force.on("tick", function() {
 
   var show_all = d3.select("#show_all").property("checked");
   vis.selectAll("path.route")
-     .attr("display", function(d) { return d.installed == "yes" || show_all ? "inline" : "none"; })
+     .attr("display", function(d) { return (d.installed == "yes" && d.metric != "65535") || show_all ? "inline" : "none"; })
      .attr("opacity", function(d) { return d.installed == "yes" ? "1" : "0.3"; })
      .attr("stroke-dasharray", function(d) { return d.installed == "yes" ? "none" : "5,2"; })
      .attr("d", function(d) { return route_path(d.path); });
