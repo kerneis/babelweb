@@ -17,12 +17,14 @@
   <body>
       <h1>BabelWeb</h1>
       <h2>Routers</h2>
-      <p id="fig">
-      <span class="legend">Legend</span>
+      <div id="fig">
+      <p class="legend">
+      <span class="legend-title">Legend</span>
       <span class="legend-me">Me</span>
       <span class="legend-neighbour">Neighbours</span>
       <span class="legend-other">Others</span>
       </p>
+      </div>
     <h3>Configuration</h3>
     <p>
     <input type="checkbox" id="show_all" checked = "checked" onClick="redisplay();" >
@@ -53,7 +55,8 @@
         </tr>
     </tbody>
 </table>
-<p><span class="legend">Legend</span>
+<p class="legend">
+<span class="legend-title">Legend</span>
 <span class="legend-wiredLink">Wired link (96)</span>
 <span class="legend-losslessWireless">Lossless wireless link (256)</span>
 <span class="legend-unreachable">Unreachable (65535)</span> <br>
@@ -79,7 +82,8 @@
         </tr>
     </tbody>
 </table>
-<p><span class="legend">Legend</span>
+<p class="legend">
+<span class="legend-title">Legend</span>
 <span class="legend-installed">Installed</span>
 <span class="legend-uninstalled">Not installed</span>
 <span class="legend-unreachable">Unreachable (<tt>metric</tt> 65535)</span>

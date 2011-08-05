@@ -260,7 +260,7 @@ var randomizeNodes = function() {
 }
 
 var vis = d3.select("#fig")
-    .insert("svg:svg", "span.legend")
+    .insert("svg:svg", ".legend")
     .attr("width", width)
     .attr("height", height)
     .attr("stroke-width", "1.5px");
