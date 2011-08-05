@@ -161,7 +161,7 @@ var recompute_table = function(name) {
                    .duration(1000)
                    .style("background-color",
                                  d.value.installed == "yes" ?
-                                 colors.installed : (parseInt(d.value.metric, 10) < 65535 ?
+                                 colors.installed : (d.value.metric != "65535" ?
                                  colors.uninstalled : colors.unreachable));
             else if(name == "neighbour") {
                  tr.transition()
