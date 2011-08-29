@@ -26,7 +26,7 @@ var config = {
   , "babelPort" : "33123"        /* Babel interface port */
   , "updateIval": 3000           /* Time between two updates (ms) */
   , "verbose": false             /* Print every message received from Babel nodes */
-  , "user": ""                    /* Drop priviledges to this user */
+  , "user": ""                   /* Drop priviledges to this user */
 };
 
 for(key in config) {
@@ -51,7 +51,7 @@ process.argv.forEach(function (val, index, array) {
 var babel = {};
 var needUpdate = false;
 
-if(process.getuid() == 0 && config.uid == "") {
+if(process.getuid() == 0 && config.user == "") {
     console.error("Refusing to run as root.  Set the \"user\" option, please.");
     process.exit(1);
 }
