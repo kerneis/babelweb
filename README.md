@@ -80,7 +80,7 @@ See `man npm-config` for more details.
 Security
 --------
  
-Babelweb works better when started as root, and will drop priviledges as soon
+Babelweb works better when started as root, and will drop privileges as soon
 as possible.  See the man page for more details.
 
 Browser support
