@@ -143,7 +143,7 @@ d3.layout.chord = function() {
         if (source.value || target.value) {
           chords.push(source.value < target.value
               ? {source: target, target: source}
-              : {source: source, target: target})
+              : {source: source, target: target});
         }
       }
     }
@@ -209,6 +209,7 @@ d3.layout.force = function() {
   var force = {},
       event = d3.dispatch("tick"),
       size = [1, 1],
+      drag,
       alpha,
       friction = .9,
       linkDistance = d3_layout_forceLinkDistance,
@@ -232,15 +233,15 @@ d3.layout.force = function() {
         /* Barnes-Hut criterion. */
         if ((x2 - x1) * dn < theta) {
           var k = kc * quad.count * dn * dn;
-          node.x += dx * k;
-          node.y += dy * k;
+          node.px -= dx * k;
+          node.py -= dy * k;
           return true;
         }
 
         if (quad.point && isFinite(dn)) {
           var k = kc * dn * dn;
-          node.x += dx * k;
-          node.y += dy * k;
+          node.px -= dx * k;
+          node.py -= dy * k;
         }
       }
     };
@@ -249,12 +250,13 @@ d3.layout.force = function() {
   function tick() {
     var n = nodes.length,
         m = links.length,
-        q = d3.geom.quadtree(nodes),
+        q,
         i, // current index
         o, // current object
         s, // current source
         t, // current target
         l, // current distance
+        k, // current force
         x, // x-distance
         y; // y-distance
 
@@ -269,30 +271,32 @@ d3.layout.force = function() {
         l = alpha * strengths[i] * ((l = Math.sqrt(l)) - distances[i]) / l;
         x *= l;
         y *= l;
-        t.x -= x;
-        t.y -= y;
-        s.x += x;
-        s.y += y;
+        t.x -= x * (k = s.weight / (t.weight + s.weight));
+        t.y -= y * k;
+        s.x += x * (k = 1 - k);
+        s.y += y * k;
       }
     }
 
     // apply gravity forces
-    var kg = alpha * gravity;
-    x = size[0] / 2;
-    y = size[1] / 2;
-    i = -1; while (++i < n) {
-      o = nodes[i];
-      o.x += (x - o.x) * kg;
-      o.y += (y - o.y) * kg;
+    if (k = alpha * gravity) {
+      x = size[0] / 2;
+      y = size[1] / 2;
+      i = -1; if (k) while (++i < n) {
+        o = nodes[i];
+        o.x += (x - o.x) * k;
+        o.y += (y - o.y) * k;
+      }
     }
 
-    // compute quadtree center of mass
-    d3_layout_forceAccumulate(q);
-
-    // apply charge forces
-    var kc = alpha * charge;
-    i = -1; while (++i < n) {
-      q.visit(repulse(nodes[i], kc));
+    // compute quadtree center of mass and apply charge forces
+    if (k = alpha * charge) {
+      d3_layout_forceAccumulate(q = d3.geom.quadtree(nodes));
+      i = -1; while (++i < n) {
+        if (!(o = nodes[i]).fixed) {
+          q.visit(repulse(o, k));
+        }
+      }
     }
 
     // position verlet integration
@@ -387,6 +391,7 @@ d3.layout.force = function() {
 
     for (i = 0; i < n; ++i) {
       (o = nodes[i]).index = i;
+      o.weight = 0;
     }
 
     distances = [];
@@ -397,6 +402,8 @@ d3.layout.force = function() {
       if (typeof o.target == "number") o.target = nodes[o.target];
       distances[i] = linkDistance.call(this, o, i);
       strengths[i] = linkStrength.call(this, o, i);
+      ++o.source.weight;
+      ++o.target.weight;
     }
 
     for (i = 0; i < n; ++i) {
@@ -449,110 +456,45 @@ d3.layout.force = function() {
 
   // use `node.call(force.drag)` to make nodes draggable
   force.drag = function() {
+    if (!drag) drag = d3.behavior.drag()
+        .on("dragstart", dragstart)
+        .on("drag", d3_layout_forceDrag)
+        .on("dragend", d3_layout_forceDragEnd);
 
-    this
-      .on("mouseover.force", d3_layout_forceDragOver)
-      .on("mouseout.force", d3_layout_forceDragOut)
-      .on("mousedown.force", dragdown)
-      .on("touchstart.force", dragdown);
-
-    d3.select(window)
-      .on("mousemove.force", d3_layout_forceDragMove)
-      .on("touchmove.force", d3_layout_forceDragMove)
-      .on("mouseup.force", d3_layout_forceDragUp, true)
-      .on("touchend.force", d3_layout_forceDragUp, true)
-      .on("click.force", d3_layout_forceDragClick, true);
-
-    return force;
+    this.on("mouseover.force", d3_layout_forceDragOver)
+        .on("mouseout.force", d3_layout_forceDragOut)
+        .call(drag);
   };
 
-  function dragdown(d, i) {
-    var m = d3_layout_forcePoint(this.parentNode);
-    (d3_layout_forceDragNode = d).fixed = true;
-    d3_layout_forceDragMoved = false;
-    d3_layout_forceDragElement = this;
+  function dragstart(d) {
+    d3_layout_forceDragOver(d3_layout_forceDragNode = d);
     d3_layout_forceDragForce = force;
-    d3_layout_forceDragOffset = [m[0] - d.x, m[1] - d.y];
-    d3_layout_forceCancel();
   }
 
   return force;
 };
 
 var d3_layout_forceDragForce,
-    d3_layout_forceDragNode,
-    d3_layout_forceDragMoved,
-    d3_layout_forceDragOffset,
-    d3_layout_forceStopClick,
-    d3_layout_forceDragElement;
+    d3_layout_forceDragNode;
 
 function d3_layout_forceDragOver(d) {
-  d.fixed = true;
+  d.fixed |= 2;
 }
 
 function d3_layout_forceDragOut(d) {
-  if (d !== d3_layout_forceDragNode) {
-    d.fixed = false;
-  }
+  if (d !== d3_layout_forceDragNode) d.fixed &= 1;
 }
 
-function d3_layout_forcePoint(container) {
-  return d3.event.touches
-      ? d3.svg.touches(container)[0]
-      : d3.svg.mouse(container);
+function d3_layout_forceDragEnd() {
+  d3_layout_forceDrag();
+  d3_layout_forceDragNode.fixed &= 1;
+  d3_layout_forceDragForce = d3_layout_forceDragNode = null;
 }
 
-function d3_layout_forceDragMove() {
-  if (!d3_layout_forceDragNode) return;
-  var parent = d3_layout_forceDragElement.parentNode;
-
-  // O NOES! The drag element was removed from the DOM.
-  if (!parent) {
-    d3_layout_forceDragNode.fixed = false;
-    d3_layout_forceDragOffset = d3_layout_forceDragNode = d3_layout_forceDragElement = null;
-    return;
-  }
-
-  var m = d3_layout_forcePoint(parent);
-  d3_layout_forceDragMoved = true;
-  d3_layout_forceDragNode.px = m[0] - d3_layout_forceDragOffset[0];
-  d3_layout_forceDragNode.py = m[1] - d3_layout_forceDragOffset[1];
-  d3_layout_forceCancel();
+function d3_layout_forceDrag() {
+  d3_layout_forceDragNode.px += d3.event.dx;
+  d3_layout_forceDragNode.py += d3.event.dy;
   d3_layout_forceDragForce.resume(); // restart annealing
-}
-
-function d3_layout_forceDragUp() {
-  if (!d3_layout_forceDragNode) return;
-
-  // If the node was moved, prevent the mouseup from propagating.
-  // Also prevent the subsequent click from propagating (e.g., for anchors).
-  if (d3_layout_forceDragMoved) {
-    d3_layout_forceStopClick = true;
-    d3_layout_forceCancel();
-  }
-
-  // Don't trigger this for touchend.
-  if (d3.event.type === "mouseup") {
-    d3_layout_forceDragMove();
-  }
-
-  d3_layout_forceDragNode.fixed = false;
-  d3_layout_forceDragForce =
-  d3_layout_forceDragOffset =
-  d3_layout_forceDragNode =
-  d3_layout_forceDragElement = null;
-}
-
-function d3_layout_forceDragClick() {
-  if (d3_layout_forceStopClick) {
-    d3_layout_forceCancel();
-    d3_layout_forceStopClick = false;
-  }
-}
-
-function d3_layout_forceCancel() {
-  d3.event.stopPropagation();
-  d3.event.preventDefault();
 }
 
 function d3_layout_forceAccumulate(quad) {
@@ -609,7 +551,7 @@ d3.layout.partition = function() {
           n = children.length,
           c,
           d;
-      dx /= node.value;
+      dx = node.value ? dx / node.value : 0;
       while (++i < n) {
         position(c = children[i], x, d = c.value * dx, dy);
         x += d;
@@ -1103,7 +1045,7 @@ d3.layout.hierarchy = function() {
       if (sort) c.sort(sort);
       if (value) node.value = v;
     } else if (value) {
-      node.value = value.call(hierarchy, data, depth);
+      node.value = +value.call(hierarchy, data, depth) || 0;
     }
     return node;
   }
@@ -1118,7 +1060,7 @@ d3.layout.hierarchy = function() {
           j = depth + 1;
       while (++i < n) v += revalue(children[i], j);
     } else if (value) {
-      v = value.call(hierarchy, d3_layout_hierarchyInline ? node : node.data, depth);
+      v = +value.call(hierarchy, d3_layout_hierarchyInline ? node : node.data, depth) || 0;
     }
     if (value) node.value = v;
     return v;
@@ -1486,8 +1428,8 @@ d3.layout.tree = function() {
     function firstWalk(node, previousSibling) {
       var children = node.children,
           layout = node._tree;
-      if (children) {
-        var n = children.length,
+      if (children && (n = children.length)) {
+        var n,
             firstChild = children[0],
             previousChild,
             ancestor = firstChild,
@@ -1815,7 +1757,7 @@ d3.layout.treemap = function() {
         v = u ? round(row.area / u) : 0,
         o;
     if (u == rect.dx) { // horizontal subdivision
-      if (flush || v > rect.dy) v = rect.dy; // over+underflow
+      if (flush || v > rect.dy) v = v ? rect.dy : 0; // over+underflow
       while (++i < n) {
         o = row[i];
         o.x = x;
@@ -1828,7 +1770,7 @@ d3.layout.treemap = function() {
       rect.y += v;
       rect.dy -= v;
     } else { // vertical subdivision
-      if (flush || v > rect.dx) v = rect.dx; // over+underflow
+      if (flush || v > rect.dx) v = v ? rect.dx : 0; // over+underflow
       while (++i < n) {
         o = row[i];
         o.x = x;
