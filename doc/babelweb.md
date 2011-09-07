@@ -28,15 +28,15 @@ Options are a list of `key=value` pairs.
 * `verbose`:
    (very) verbose output (default: `false`).
 * `user`:
-   drop priviledges to this user if started as root (default: ``).
+   drop privileges to this user if started as root (default: ``).
 
 ## SECURITY
  
 Running as root is not mandatory but recommended to enable the Flash policy
 server used by socket.io (on port 843 --- open your firewall!).  Babelweb
-drops priviledges as soon as the server is started, and refuses to continue if
-dropping priviledges fails.  Use the "user" option to choose which user to drop
-priviledges to.
+drops privileges as soon as the server is started, and refuses to continue if
+dropping privileges fails.  Use the "user" option to choose which user to drop
+privileges to.
 
 ## SIGNALS
 
