@@ -51,11 +51,6 @@ process.argv.forEach(function (val, index, array) {
 var babel = {};
 var needUpdate = false;
 
-if(process.getuid() == 0 && config.user == "") {
-    console.error("Refusing to run as root.  Set the \"user\" option, please.");
-    process.exit(1);
-}
-
 /* Serving the results */
 
 var http = require('http');
@@ -84,15 +79,21 @@ io.configure(function(){
   ]);
 });
 
-if(config.user != "") {
+if(config.user != "" && process.getuid() == 0 && process.getgid() == 0) {
     try {
-        process.setuid(config.user);
+        var security = require("./build/default/security");
+        security.dropPrivileges(config.user);
         console.error("Dropped priviledges.");
     }
     catch(err) {
         console.error("Failed to drop priviledges. Error: [%s] Call: [%s]", err.message, err.syscall);
         process.exit(1);
     }
+}
+
+if(process.getuid() == 0 || process.getgid() == 0) {
+    console.error("Refusing to run as root.  Set the \"user\" option, please.");
+    process.exit(1);
 }
 
 /* Send updates to clients when they connect */

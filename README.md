@@ -64,7 +64,7 @@ See the man page for a list of options (also available in the doc/ directory):
 
 You can specify options directly on the command-line:
 
-    sudo babelweb serverPort=80 serverAddress=127.0.0.1 user=www-data
+    sudo env PATH=$PATH babelweb serverPort=80 serverAddress=127.0.0.1 user=www-data
 
 Alternatively, you can manage babelweb options through npm:
 
@@ -80,7 +80,7 @@ See `man npm-config` for more details.
 Security
 --------
  
-Babelweb works better when started as root, and will drop priviledges as soon
+Babelweb works better when started as root, and will drop privileges as soon
 as possible.  See the man page for more details.
 
 Browser support

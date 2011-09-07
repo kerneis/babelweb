@@ -3,6 +3,9 @@ babelweb-changelog(1) -- Changes
 
 ## HISTORY
 
+### 0.2.3
+* Security fix: properly drop privileges (thanks to Julien Cristau)
+
 ### 0.2.2
 * Security fix: refuse to run as root
 

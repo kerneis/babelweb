@@ -47,16 +47,16 @@ time between updates to the browser, in milliseconds (default: \fB3000\fR)\.
 .
 .IP "\(bu" 4
 \fBuser\fR:
-drop priviledges to this user if started as root (default: \fB\fR)\.
+drop privileges to this user if started as root (default: \fB\fR)\.
 .
 .IP "" 0
 .
 .SH "SECURITY"
 Running as root is not mandatory but recommended to enable the Flash policy
 server used by socket\.io (on port 843 \-\-\- open your firewall!)\.  Babelweb
-drops priviledges as soon as the server is started, and refuses to continue if
-dropping priviledges fails\.  Use the "user" option to choose which user to drop
-priviledges to\.
+drops privileges as soon as the server is started, and refuses to continue if
+dropping privileges fails\.  Use the "user" option to choose which user to drop
+privileges to\.
 .
 .SH "SIGNALS"
 Babelweb reacts to the SIGUSR1 and SIGUSR2 signals:
