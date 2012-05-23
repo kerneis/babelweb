@@ -11,10 +11,10 @@
 , "scripts" : {"start": "./bin/babelweb"}
 , "dependencies":
   { "socket.io": "0.7.x"
-  , "connect": "1.6.x" }
+  , "connect": "1.7.x" }
 , "devDependencies" :
   { "ronn" : "0.3.x" }
-, "engines": { "node": "0.4.x" }
+, "engines": { "node": "0.6.x" }
 , "directories" :
   { "doc" : "./doc"
   , "man" : "./man1"
