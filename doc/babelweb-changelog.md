@@ -3,6 +3,11 @@ babelweb-changelog(1) -- Changes
 
 ## HISTORY
 
+### 0.2.4
+* Use the latest release of D3
+* Fix install dependencies for npm
+* Change jussieu.fr to univ-paris-diderot.fr
+
 ### 0.2.3
 * Security fix: properly drop privileges (thanks to Julien Cristau)
 
