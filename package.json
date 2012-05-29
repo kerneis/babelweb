@@ -1,6 +1,6 @@
 {
   "name": "babelweb"
-, "version": "0.2.3"
+, "version": "0.2.4"
 , "description": "Web-based monitoring tool for the Babel routing protocol"
 , "homepage": "http://www.pps.univ-paris-diderot.fr/~kerneis/software/babelweb"
 , "keywords": [ "babel", "routing", "monitoring" ]
