@@ -15,7 +15,7 @@ Browse http://localhost:8080/.
 Detailed instructions (from git repository or archive)
 ---------------------
 
-You'll need nodejs (>= 0.4.0) and npm (>=1.0).  If you don't have them
+You'll need nodejs (>= 0.6.0) and npm (>=1.0).  If you don't have them
 installed yet, follow the [installation
 instructions](https://github.com/joyent/node/wiki/Installation) for your
 platform.
@@ -97,4 +97,4 @@ some visual bells and whistles).
 
 Please, do not hesitate to send reports of working and broken browsers.
 
-Gabriel Kerneis <kerneis@pps.jussieu.fr>
+Gabriel Kerneis <kerneis@pps.univ-paris-diderot.fr>

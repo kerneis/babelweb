@@ -193,16 +193,15 @@ var recompute_table = function(name) {
                .style("opacity",1)
                .text(function(d){return d;});
         }
-        rows.each(update_row);
         rows.enter().append("tr")
             .attr("id", function(d) { return name+"-"+normalize_id(d.key); })
-            .style("background-color","white")
-            .each(update_row);
+            .style("background-color","white");
         rows.exit()
             .transition()
             .duration(1000)
             .style("opacity",0)
             .remove();
+        rows.each(update_row);
 };
 
 /* Update counters in the page */
