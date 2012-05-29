@@ -97,4 +97,4 @@ some visual bells and whistles).
 
 Please, do not hesitate to send reports of working and broken browsers.
 
-Gabriel Kerneis <kerneis@pps.jussieu.fr>
+Gabriel Kerneis <kerneis@pps.univ-paris-diderot.fr>

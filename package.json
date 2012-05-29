@@ -2,9 +2,9 @@
   "name": "babelweb"
 , "version": "0.2.3"
 , "description": "Web-based monitoring tool for the Babel routing protocol"
-, "homepage": "http://www.pps.jussieu.fr/~kerneis/software/babelweb"
+, "homepage": "http://www.pps.univ-paris-diderot.fr/~kerneis/software/babelweb"
 , "keywords": [ "babel", "routing", "monitoring" ]
-, "author": "Gabriel Kerneis <kerneis@pps.jussieu.fr> (http://www.pps.jussieu.fr/~kerneis/)"
+, "author": "Gabriel Kerneis <kerneis@pps.univ-paris-diderot.fr> (http://www.pps.univ-paris-diderot.fr/~kerneis/)"
 , "repository":
   { "type": "git"
   , "url": "git://kerneis.info/babelweb" }
