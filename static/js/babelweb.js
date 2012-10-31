@@ -312,6 +312,17 @@ function insertKey(arr, obj) {
         return arr;
 };
 
+first = function(array, f) {
+  var i = 0, n = array.length, a = array[0], b;
+  if (arguments.length === 1) f = d3.ascending;
+  while (++i < n) {
+    if (f.call(array, a, b = array[i]) > 0) {
+      a = b;
+    }
+  }
+  return a;
+};
+
 var recompute_network = function() {
 
     var me = babel.self.alamakota.id;
@@ -369,8 +380,8 @@ var recompute_network = function() {
      * (This is a hack, a neighbour might hide routes to itself.) */
     addrToRouterId = {};
     for(var n in neighToRouterMetric) {
-            addrToRouterId[n] = d3.first(d3.entries(neighToRouterMetric[n]), function(a, b) {
-            return a.value.refmetric < b.value.refmetric ? -1 : a.value.refmetric > b.value.refmetric ? 1 : 0;
+            addrToRouterId[n] = first(d3.entries(neighToRouterMetric[n]), function(a, b) {
+            return a.value.refmetric - b.value.refmetric;
             }).key;
     }
 
