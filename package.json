@@ -10,7 +10,7 @@
   , "url": "git://kerneis.info/babelweb" }
 , "scripts" : {"start": "./bin/babelweb"}
 , "dependencies":
-  { "socket.io": "0.7.x"
+  { "socket.io": "0.9.x"
   , "connect": "1.7.x" }
 , "devDependencies" :
   { "ronn" : "0.3.x" }

@@ -62,7 +62,6 @@ if(config.verbose)
         server.use(connect.logger());
 server.listen(config.serverPort, config.serverAddress);
 
-/* Needs to be root to enable Flash policy server on port 843 */
 var io = require('socket.io').listen(server);
 
 io.configure(function(){
@@ -78,23 +77,6 @@ io.configure(function(){
   , 'jsonp-polling'
   ]);
 });
-
-if(config.user != "" && process.getuid() == 0 && process.getgid() == 0) {
-    try {
-        var security = require("./build/default/security");
-        security.dropPrivileges(config.user);
-        console.error("Dropped priviledges.");
-    }
-    catch(err) {
-        console.error("Failed to drop priviledges. Error: [%s] Call: [%s]", err.message, err.syscall);
-        process.exit(1);
-    }
-}
-
-if(process.getuid() == 0 || process.getgid() == 0) {
-    console.error("Refusing to run as root.  Set the \"user\" option, please.");
-    process.exit(1);
-}
 
 /* Send updates to clients when they connect */
 
