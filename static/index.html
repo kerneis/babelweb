@@ -6,6 +6,14 @@
     <script type="text/javascript" src="/js/d3.v3.js"></script>
     <link type="text/css" rel="stylesheet" href="/css/style.css">
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/js/babelweb.js"></script>
+    <script type="text/javascript">
+    window.onload = function() {
+      babel = babelweb();
+      babel.init();
+      babel.connect('');
+    }
+    </script>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -25,13 +33,13 @@
       </div>
     <h3>Configuration</h3>
     <p>
-    <input type="checkbox" id="show_all" checked = "checked" onClick="redisplay();" >
+    <input type="checkbox" id="show_all" checked = "checked" onClick="babel.redisplay();" >
     <label for="show_all">Show uninstalled routes</label><br>
-    <input type="checkbox" id="logscale" checked = "checked" onClick="redisplay();" >
+    <input type="checkbox" id="logscale" checked = "checked" onClick="babel.redisplay();" >
     <label for="logscale">Logarithmic scale</label><br>
-    <input type="button" value="Randomize" onClick="randomizeNodes();" >
-    <input type="button" value="Zoom in" onClick="zoomIn(1.5);" >
-    <input type="button" value="Zoom out" onClick="zoomOut(1.5);" >
+    <input type="button" value="Randomize" onClick="babel.randomizeNodes();" >
+    <input type="button" value="Zoom in" onClick="babel.zoomIn(1.5);" >
+    <input type="button" value="Zoom out" onClick="babel.zoomOut(1.5);" >
     </p>
     <p>Updates : <span id="updates">0</span>.
        State: <span id="state" class="bad">disconnected</span>.</p>
@@ -114,6 +122,5 @@ It is inspired by BabelTool, a Java software by <a
     href="http://www.pps.univ-paris-diderot.fr/~pejman">Pejman Attar</a> and Alexis
 Roso.  Many thanks to Didier Gillet who coined the name.
 </p>
-<script type="text/javascript" src="/js/babelweb.js"></script>
   </body>
 </html>
