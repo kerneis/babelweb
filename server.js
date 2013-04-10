@@ -104,7 +104,7 @@ io.sockets.on('connection', function (client) {
     states.push(r.getState());
   });
   if (states.length > 0) {
-    client.send(JSON.stringify(states));
+    client.json.send(states);
   }
 });
 
@@ -117,7 +117,7 @@ function timedUpdate() {
     }
   });
   if (update.length > 0) {
-    io.sockets.volatile.send(JSON.stringify(update));
+    io.sockets.volatile.json.send(update);
   }
   setTimeout(timedUpdate, config.updateInterval);
 }

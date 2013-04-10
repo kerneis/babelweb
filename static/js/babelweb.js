@@ -60,7 +60,7 @@ function babelweb() {
         colors.unreachableNeighbour]);
 
   function handleUpdate(message) {
-    var m = JSON.parse(message)[0];
+    var m = message[0];
     if (babel.self.id !== "unknown" && babel.self.id !== m.self.id)
       return;
     else
