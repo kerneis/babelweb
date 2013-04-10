@@ -58,6 +58,7 @@
           process.exit(1);
         }
         break;
+       case 'done': break;
       default:
         console.error('Ignoring unknown token: ' + tokens[0]);
       }
