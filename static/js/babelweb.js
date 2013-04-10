@@ -67,51 +67,8 @@ function babelweb() {
       babel = m;
     /* Routes table */
     recompute_table("route");
-//    d3.select("#route").selectAll("tr")
-//      .on("mouseover", function(d) {
-//        if(typeof d == 'undefined') return; /* trap event bubbling */
-//        d3.select(this).style("opacity","0.7");
-//        if(d.value.metric == "65535") return;
-//        var key = d.value.id + d.value.via + d.value.installed;
-//        var id = "#link-"+normalize_id(key);
-//        d3.select(id)
-//        .attr("stroke", colors.selected)
-//        .attr("stroke-width", "5px");
-//      // XXX put just before d3.select("circle.node")
-//      })
-//    .on("mouseout", function(d) {
-//      if(typeof d == 'undefined') return; /* trap event bubbling */
-//      // No metric check on purpose: try torestore even
-//      // retracted routes, in case of it went off during
-//      // mouseover.
-//      var key = d.value.id + d.value.via + d.value.installed;
-//      var id = "#link-"+normalize_id(key);
-//      d3.select(this).style("opacity","");
-//      d3.select(id)
-//      .attr("stroke", colors.route)
-//      .attr("stroke-width", "");
-//    });
     /* Neighbours table */
     recompute_table("neighbour");
-//    d3.select("#neighbour").selectAll("tr")
-//      .on("mouseover", function(d) {
-//        if(typeof d == 'undefined') return; /* trap event bubbling */
-//        d3.select(this).style("opacity","0.7");
-//        if(typeof addrToRouterId[d.value.address] == 'undefined') return;
-//        var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
-//        d3.select(id)
-//        .attr("stroke",colors.selected)
-//        .attr("r", "8");
-//      })
-//    .on("mouseout", function(d) {
-//      if(typeof d == 'undefined') return; /* trap event bubbling */
-//      d3.select(this).style("opacity","");
-//      if(typeof addrToRouterId[d.value.address] == 'undefined') return;
-//      var id = "#node-"+normalize_id(addrToRouterId[d.value.address]);
-//      d3.select(id)
-//      .attr("stroke","white")
-//      .attr("r", "5");
-//    });
     /* Exported routes tables */
     recompute_table("xroute");
     /* Graph */
