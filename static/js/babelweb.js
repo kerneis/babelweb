@@ -1,7 +1,8 @@
 function babelweb() {
 
   /* Full information, as output by Babel */
-  var babel = {"self":{"id":"unknown", "name":"alamakota"}};
+  var current = "unknown";
+  var babelState = {};
   var routers = {}; /* List of routers to display.  Must be updated in
                        place to retain routers positions on the graph.
                        */
@@ -61,11 +62,19 @@ function babelweb() {
     .interpolate(d3.interpolateHcl);
 
   function handleUpdate(message) {
-    var m = message[0];
-    if (babel.self.id !== "unknown" && babel.self.id !== m.self.id)
+    var updatedCurrent = false;
+
+    if (current === "unknown") {
+      current = message[0].self.id;
+    }
+    for(m in message) {
+      babelState[message[m].self.id] = message[m];
+      if(message[m].self.id === current)
+        updatedCurrent = true;
+    }
+    if(!updatedCurrent) {
       return;
-    else
-      babel = m;
+    }
     /* Routes table */
     recompute_table("route");
     /* Neighbours table */
@@ -139,7 +148,7 @@ function babelweb() {
       headers.push(d3.select(this).text());
     });
     var rows = table.select("tbody").selectAll("tr")
-      .data(d3.entries(babel[name]), function(d){
+      .data(d3.entries(babelState[current][name]), function(d){
         if( typeof d == 'undefined' ) return null;
         else return d.key;
       });
@@ -187,7 +196,7 @@ function babelweb() {
   function zoomIn(factor) { zoomOut(1/factor); }
 
   function randomizeNodes() {
-    var me = babel.self.id;
+    var me = babelState[current].self.id;
     d3.selectAll("circle.node")
       .each(function(d) {
         if(d == routers[me]) {
@@ -230,14 +239,14 @@ function babelweb() {
   .interpolate("linear");
 
   function isNeighbour(id) {
-    for(var n in babel.neighbour)
-      if(addrToRouterId[babel.neighbour[n].address] == id)
+    for(var n in babelState[current].neighbour)
+      if(addrToRouterId[babelState[current].neighbour[n].address] == id)
         return true;
     return false;
   }
 
   function onTick() {
-    me = babel.self.id;
+    me = babelState[current].self.id;
 
     vis.selectAll("circle.node")
       .style("fill", function(d) {
@@ -277,7 +286,7 @@ function babelweb() {
 
   function recompute_network() {
 
-    var me = babel.self.id;
+    var me = babelState[current].self.id;
 
     /* Make sure "me" is in the router list, fixed and centered */
     if(typeof routers[me] == 'undefined') {
@@ -300,8 +309,8 @@ function babelweb() {
        - routers, with the minimal metric to reach them from me,
        - neighbours, with the minimal metric to every router */
     var neighToRouterMetric = {};
-    for (var route in babel.route) {
-      var r = babel.route[route];
+    for (var route in babelState[current].route) {
+      var r = babelState[current].route[route];
 
       var metric = parseInt(r.metric, 10);
       var refmetric = parseInt(r.refmetric, 10);
@@ -359,8 +368,8 @@ function babelweb() {
 
     /* Build a list of routes to display */
     routes = [];
-    for (var r_key in babel.route) {
-      var r = babel.route[r_key];
+    for (var r_key in babelState[current].route) {
+      var r = babelState[current].route[r_key];
       if(r.metric == "65535") // do not display retracted routes
         continue;
 
@@ -400,7 +409,7 @@ function babelweb() {
       .attr("stroke", "white")
       .attr("id", function(d) {return "node-"+normalize_id(d.nodeName);})
       .each(function(d) {
-        if(d.nodeName != babel.self.id)
+        if(d.nodeName != babelState[current].self.id)
         d3.select(this).call(force.drag);
       })
     .append("svg:title");
