@@ -120,7 +120,7 @@ function babelweb() {
     /* Number of updates */
     count("updates");
   }
- 
+
   /* Update status message */
   function update_status(msg, good) {
     d3.select("#state").text(msg);
@@ -156,7 +156,7 @@ function babelweb() {
   }
 
   function update_row (d, name, headers) {
-    /* For each <tr> row, iterate through <th> headers 
+    /* For each <tr> row, iterate through <th> headers
        and add <td> cells with values from the data. */
     var tr = d3.select(this);
     if(name == "route")
@@ -450,10 +450,10 @@ function babelweb() {
       d3.scale.linear().domain([0,65535]).range([0,10000]);
 
 
-    /* Restart simulation with new values */    
+    /* Restart simulation with new values */
     force.nodes(nodes).links(metrics);
     force.linkDistance(function(d) { return scale(d.metric); });
-    force.start(); 
+    force.start();
 
     /* Display routers */
     var node = vis.selectAll("circle.node")
