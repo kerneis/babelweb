@@ -117,36 +117,17 @@ function babelweb() {
        and add <td> cells with values from the data. */
     var tr = d3.select(this);
     if(name == "route")
-      tr.transition()
-        .duration(1000)
-        .style("background-color",
+      tr.style("background-color",
             (d.value.metric == "65535" ? colors.unreachable :
              d.value.installed == "yes" ? colors.installed :
              colors.uninstalled));
     else if(name == "neighbour") {
-      tr.transition()
-        .duration(1000)
-        .style("background-color", costColor(parseInt(d.value.rxcost, 10)));
+      tr.style("background-color", costColor(parseInt(d.value.rxcost, 10)));
     }
     var row = tr.selectAll("td")
       .data(headers.map(function(h){return d.value[h];}));
-    row.style("opacity", function(d) {
-      /* transition from blank if text has changed */
-      if(d3.select(this).text() != d)
-      return 0;
-      else
-      return 1;
-    })
-    .transition()
-      .duration(1000)
-      .style("opacity",1)
-      .text(function(d){return d;});
-    row.enter().append("td")
-      .style("opacity",0)
-      .transition()
-      .duration(1000)
-      .style("opacity",1)
-      .text(function(d){return d;});
+    row.text(function(d){return d;});
+    row.enter().append("td").text(function(d){return d;});
   }
 
   function recompute_table(name) {
@@ -163,12 +144,7 @@ function babelweb() {
       });
     rows.enter().append("tr")
       .attr("id", function(d) { return name+"-"+normalize_id(d.key); })
-      .style("background-color","white");
-    rows.exit()
-      .transition()
-      .duration(1000)
-      .style("opacity",0)
-      .remove();
+    rows.exit().remove();
     rows.each(function(d){update_row.call(this, d, name, headers); });
   };
 
