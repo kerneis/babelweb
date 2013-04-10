@@ -8,6 +8,7 @@
     var node = {},
       state,
       client,
+      updated,
       updateCallback = function () { return; };
 
     function parseBabel(line) {
@@ -22,6 +23,7 @@
             return false;
           }
           state.self = { name: tokens[2], id: tokens[4] };
+          updated = true;
           break;
         }
         /* every other kind of add now */
@@ -34,6 +36,7 @@
         for (i = 3; i < tokens.length; i += 2) {
           state[tokens[1]][tokens[2]][tokens[i]] = tokens[i + 1];
         }
+        updated = true;
         break;
       case 'change':
         if (typeof state[tokens[1]][tokens[2]] === "undefined") {
@@ -41,7 +44,11 @@
           return false;
         }
         for (i = 3; i < tokens.length; i += 2) {
+          if(state[tokens[1]][tokens[2]][tokens[i]] === tokens[i + 1]) {
+            continue;
+          }
           state[tokens[1]][tokens[2]][tokens[i]] = tokens[i + 1];
+          updated = true;
         }
         break;
       case 'flush':
@@ -51,6 +58,7 @@
         } else {
           delete state[tokens[1]][tokens[2]];
         }
+        updated = true;
         break;
       case 'BABEL':
         if (tokens[1] !== '0.0') {
@@ -73,6 +81,7 @@
         "xroute": {},
         "route": {},
       };
+      updated = true;
       /* Store the rest of Babel input, after the latest newline */
       var buffer = '';
 
@@ -93,7 +102,8 @@
             return;
           }
         }
-        updateCallback(node);
+        if(updated) { updateCallback(node); }
+        updated = false;
       });
 
       client.on('close', function (error) {
