@@ -57,7 +57,8 @@ function babelweb() {
     .range([colors.wiredLink,
         colors.wiredLink,
         colors.losslessWireless,
-        colors.unreachableNeighbour]);
+        colors.unreachableNeighbour])
+    .interpolate(d3.interpolateHcl);
 
   function handleUpdate(message) {
     var m = message[0];
