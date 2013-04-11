@@ -190,6 +190,7 @@ function babelweb() {
       nodes[d].y *= factor;
       nodes[d].py *= factor;
     };
+    redisplay();
   }
 
   function zoomIn(factor) { zoomOut(1/factor); }
