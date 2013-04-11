@@ -72,20 +72,19 @@ function babelweb() {
       if(message[m].self.id === current)
         updatedCurrent = true;
     }
-    if(!updatedCurrent) {
-      return;
-    }
-    /* Routes table */
-    recompute_table("route");
-    /* Neighbours table */
-    recompute_table("neighbour");
-    /* Exported routes tables */
-    recompute_table("xroute");
-    /* Graph */
-    recompute_network();
-    redisplay();
+    /* Update list of selected nodes */
+    var options = d3.select("#nodes").selectAll("option")
+      .data(d3.keys(babelState), function(d) { return d;});
+    options.enter().append("option")
+      .attr("value", function(d) { return d; })
+      .text(function (d) { return babelState[d].self.name; });
+    options.exit().remove();
     /* Number of updates */
     count("updates");
+    if(updatedCurrent) {
+      /* force updating of tables and graph */
+      setCurrent(current);
+    }
   }
 
   /* Update status message */
@@ -445,6 +444,24 @@ function babelweb() {
     initGraph();
     setZoomLevel(450, 400);
   }
+
+  function setCurrent(id) {
+    if(current != id) {
+      /* if this is a real change, clean the graph */
+      routers = {};
+    }
+    current = id;
+    /* Routes table */
+    recompute_table("route");
+    /* Neighbours table */
+    recompute_table("neighbour");
+    /* Exported routes tables */
+    recompute_table("xroute");
+    /* Graph */
+    recompute_network();
+    redisplay();
+  }
+
   var babelweb = {}
   babelweb.init = init;
   babelweb.connect = connect;
@@ -452,5 +469,6 @@ function babelweb() {
   babelweb.zoomOut = zoomOut;
   babelweb.zoomIn = zoomIn;
   babelweb.redisplay = redisplay;
+  babelweb.setCurrent = setCurrent;
   return babelweb;
 }
