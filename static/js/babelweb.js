@@ -32,7 +32,7 @@ function babelweb() {
       , wiredLink: palette.yellow
       , losslessWireless: palette.orange
       , unreachableNeighbour: palette.red
-      , me: palette.pink
+      , current: palette.pink
       , neighbour: palette.violet
       , other: palette.blue
       , selected: palette.blue
@@ -195,10 +195,9 @@ function babelweb() {
   function zoomIn(factor) { zoomOut(1/factor); }
 
   function randomizeNodes() {
-    var me = babelState[current].self.id;
     d3.selectAll("circle.node")
       .each(function(d) {
-        if(d == routers[me]) {
+        if(d == routers[current]) {
           d.x = d.px = w/2;
           d.y = d.py = h/2;
         } else {
@@ -245,12 +244,10 @@ function babelweb() {
   }
 
   function onTick() {
-    me = babelState[current].self.id;
-
     vis.selectAll("circle.node")
       .style("fill", function(d) {
-        var color =  d.nodeId == me ?
-        colors.me : ( isNeighbour(d.nodeId) ?  colors.neighbour : colors.other);
+        var color =  d.nodeId == current ?
+        colors.current : ( isNeighbour(d.nodeId) ?  colors.neighbour : colors.other);
       return color;
       })
     .attr("cx", function(d) { return xScale(d.x); })
@@ -285,12 +282,10 @@ function babelweb() {
 
   function recompute_network() {
 
-    var me = babelState[current].self.id;
-
-    /* Make sure "me" is in the router list, fixed and centered */
-    if(typeof routers[me] == 'undefined') {
-      routers[me] = {
-        nodeId: me,
+    /* Make sure "current" is in the router list, fixed and centered. */
+    if(typeof routers[current] == 'undefined') {
+      routers[current] = {
+        nodeId: current,
         nodeName: babelState[current].self.name,
         x: w/2,
         y: h/2,
@@ -303,10 +298,10 @@ function babelweb() {
     for (var r in routers) {
       routers[r].metric = undefined;
     }
-    routers[me].metric = 0;
+    routers[current].metric = 0;
 
     /* Collect:
-       - routers, with the minimal metric to reach them from me,
+       - routers, with the minimal metric to reach them from current,
        - neighbours, with the minimal metric to every router */
     var neighToRouterMetric = {};
     for (var route in babelState[current].route) {
@@ -354,7 +349,7 @@ function babelweb() {
         delete routers[r]; // Safe to delete: no route contains it
       else {
         nodes.push(routers[r]);
-        metrics.push({source:routers[me],
+        metrics.push({source:routers[current],
           target:routers[r],
           metric:routers[r].metric,
         });
@@ -376,7 +371,7 @@ function babelweb() {
 
       insertKey(routes, {
         key: normalize_id(r.id + r.via + r.installed),
-        path: [ routers[me]
+        path: [ routers[current]
         /* for neighbours, will be the same as next point:
          * this is fine. */
         , routers[addrToRouterId[r.via]]
