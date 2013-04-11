@@ -2,7 +2,7 @@ function babelweb() {
 
   /* Full information, as output by Babel */
   var current = "unknown";
-  var babelState = {};
+  var babelState = {"unknown":{"self":{"id":"unknown", "name":"none"}}};
   var routers = {}; /* List of routers to display.  Must be updated in
                        place to retain routers positions on the graph.
                        */
@@ -64,21 +64,38 @@ function babelweb() {
   function handleUpdate(message) {
     var updatedCurrent = false;
 
-    if (current === "unknown") {
-      current = message[0].self.id;
+    switch(message.type) {
+      case "update":
+
+        if (current === "unknown") {
+          current = message.update[0].self.id;
+        }
+        for(m in message.update) {
+          babelState[message.update[m].self.id] = message.update[m];
+          if(message.update[m].self.id === current)
+            updatedCurrent = true;
+        }
+        break;
+      case "delete":
+        delete babelState[message.id];
+        setCurrent("unknown");
+        break;
     }
-    for(m in message) {
-      babelState[message[m].self.id] = message[m];
-      if(message[m].self.id === current)
-        updatedCurrent = true;
-    }
-    /* Update list of selected nodes */
+    /* Update list of monitored nodes */
     var options = d3.select("#nodes").selectAll("option")
       .data(d3.keys(babelState), function(d) { return d;});
     options.enter().append("option")
       .attr("value", function(d) { return d; })
       .text(function (d) { return babelState[d].self.name; });
     options.exit().remove();
+    /* Adjust the selected option in the dropdown list */
+    var sel = document.getElementById("nodes");
+    for(var i, j = 0; i = sel.options[j]; j++) {
+      if(i.value == current) {
+        sel.selectedIndex = j;
+        break;
+      }
+    }
     /* Number of updates */
     count("updates");
     if(updatedCurrent) {
@@ -448,6 +465,9 @@ function babelweb() {
   }
 
   function setCurrent(id) {
+    if(typeof babelState[id] === "undefined") {
+      return;
+    }
     if(current != id) {
       /* if this is a real change, clean the graph */
       routers = {};

@@ -9,7 +9,8 @@
       state,
       client,
       updated,
-      updateCallback = function () { return; };
+      updateCallback = function () { return; },
+      closeCallback = function () { return; };
 
     function parseBabel(line) {
       var tokens = line.split(/\s+/), i;
@@ -107,6 +108,10 @@
       });
 
       client.on('close', function (error) {
+        /* Call close callback only if we got a "self" token */
+        if(typeof state.self.id !== "undefined") {
+          closeCallback(node, state.self.id);
+        }
         if (error) { return; /* already handled */ }
         console.error("Babel socket close: reconnecting in 1 second.");
         setTimeout(babelConnect, 1000);
@@ -137,6 +142,9 @@
     function on(e, f) {
       if (e === "update") {
         updateCallback = f;
+      }
+      if (e === "close") {
+        closeCallback = f;
       }
     }
     node.on = on;

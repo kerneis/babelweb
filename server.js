@@ -65,8 +65,17 @@ function handleUpdate(router) {
   router.hasChanged = true;
 }
 
+function handleClose(router, id) {
+  var m = {
+    "type": "delete",
+    "id": id
+  };
+  io.sockets.json.send(m);
+}
+
 routers.forEach(function (r) {
   r.on("update", handleUpdate);
+  r.on("close", handleClose);
   r.hasChanged = false;
   r.start();
 });
@@ -106,20 +115,23 @@ io.sockets.on('connection', function (client) {
     states.push(r.getState());
   });
   if (states.length > 0) {
-    client.json.send(states);
+    client.json.send({"type":"update", "update":states});
   }
 });
 
 function timedUpdate() {
-  var update = [];
+  var m = {
+    "type": "update",
+    "update": []
+  };
   routers.forEach(function (r) {
     if (r.hasChanged) {
-      update.push(r.getState());
+      m.update.push(r.getState());
       r.hasChanged = false;
     }
   });
-  if (update.length > 0) {
-    io.sockets.volatile.json.send(update);
+  if (m.update.length > 0) {
+    io.sockets.volatile.json.send(m);
   }
   setTimeout(timedUpdate, config.updateInterval);
 }
