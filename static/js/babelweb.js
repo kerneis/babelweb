@@ -287,7 +287,6 @@ function babelweb() {
     if(typeof routers[current] == 'undefined') {
       routers[current] = {
         nodeId: current,
-        nodeName: babelState[current].self.name,
         x: w/2,
         y: h/2,
         fixed: true,
@@ -315,7 +314,6 @@ function babelweb() {
         /* New router ID discovered */
         routers[r.id] = {
           nodeId:r.id,
-          nodeName: "unknown",
           metric:metric,
           via:r.via,
         };
@@ -412,11 +410,11 @@ function babelweb() {
     .append("svg:title");
     node.exit().remove();
 
-    /* update metric in node title */
+    /* update metric and name in node title */
     vis.selectAll("circle.node").each(function(d) {
       d3.select(this).select("title")
       .text(
-        (typeof(d.nodeName) === "undefined" ? "unknown" : d.nodeName)
+          nodeName(d.nodeId)
         + " ["+d.nodeId+"]"
         + " (metric: "+d.metric+")");
 
@@ -433,6 +431,14 @@ function babelweb() {
       .attr("d", function(d) { return route_path(d.path); });
     route.exit().remove();
 
+  }
+
+  function nodeName(id) {
+   if (typeof babelState[id] === "undefined") {
+      return "unknown";
+   } else {
+      return babelState[id].self.name;
+   }
   }
 
   function init() {
