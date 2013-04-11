@@ -250,8 +250,8 @@ function babelweb() {
 
     vis.selectAll("circle.node")
       .style("fill", function(d) {
-        var color =  d.nodeName == me ?
-        colors.me : ( isNeighbour(d.nodeName) ?  colors.neighbour : colors.other);
+        var color =  d.nodeId == me ?
+        colors.me : ( isNeighbour(d.nodeId) ?  colors.neighbour : colors.other);
       return color;
       })
     .attr("cx", function(d) { return xScale(d.x); })
@@ -291,7 +291,8 @@ function babelweb() {
     /* Make sure "me" is in the router list, fixed and centered */
     if(typeof routers[me] == 'undefined') {
       routers[me] = {
-        nodeName : me,
+        nodeId: me,
+        nodeName: babelState[current].self.name,
         x: w/2,
         y: h/2,
         fixed: true,
@@ -318,7 +319,8 @@ function babelweb() {
       if(!routers[r.id]) {
         /* New router ID discovered */
         routers[r.id] = {
-          nodeName:r.id,
+          nodeId:r.id,
+          nodeName: "unknown",
           metric:metric,
           via:r.via,
         };
@@ -407,9 +409,9 @@ function babelweb() {
       .attr("cy", function(d) { return yScale(d.y); })
       .attr("r", 5)
       .attr("stroke", "white")
-      .attr("id", function(d) {return "node-"+normalize_id(d.nodeName);})
+      .attr("id", function(d) {return "node-"+normalize_id(d.nodeId);})
       .each(function(d) {
-        if(d.nodeName != babelState[current].self.id)
+        if(d.nodeId != babelState[current].self.id)
         d3.select(this).call(force.drag);
       })
     .append("svg:title");
@@ -418,7 +420,10 @@ function babelweb() {
     /* update metric in node title */
     vis.selectAll("circle.node").each(function(d) {
       d3.select(this).select("title")
-      .text(d.nodeName + " (metric: "+d.metric+")");
+      .text(
+        (typeof(d.nodeName) === "undefined" ? "unknown" : d.nodeName)
+        + " ["+d.nodeId+"]"
+        + " (metric: "+d.metric+")");
 
     });
 

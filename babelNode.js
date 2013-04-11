@@ -12,7 +12,7 @@
       updateCallback = function () { return; };
 
     function parseBabel(line) {
-      var tokens = line.split(' '), i;
+      var tokens = line.split(/\s+/), i;
 
       switch (tokens[0]) {
       case 'add':
