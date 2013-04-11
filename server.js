@@ -21,6 +21,8 @@ THE SOFTWARE.
 
 "use strict";
 
+process.title = 'babelweb';
+
 var config = {
     "serverAddress" : "::",
     "serverPort" : "8080",
