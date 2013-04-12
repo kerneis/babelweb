@@ -24,11 +24,10 @@ THE SOFTWARE.
 process.title = 'babelweb';
 
 var config = {
-    "serverAddress" : "::",
-    "serverPort" : "8080",
-    "babelAddress" : "::1",
-    "babelPort" : "33123",
-    "updateInterval" : "1000",
+    "host" : "::",
+    "port" : "8080",
+    "routers" : "[::1]:33123",
+    "update" : "1000",
     "verbose": false
   };
 
@@ -55,11 +54,12 @@ process.argv.forEach(function (val, index, array) {
 
 /* Setup connect */
 var babelNode = require('./babelNode');
-var routers = [
-  babelNode.connect({port: config.babelPort, address: config.babelAddress}),
-// example for a second instance:
-// babelNode.connect({port: parseInt(config.babelPort, 10) + 1, address: config.babelAddress})
-];
+var url = require('url');
+var routers =
+  config.routers.split(',').map(function(r) {
+    var u = url.parse("ip:" + r);
+    return babelNode.connect({port: u.port, host: u.hostname});
+  });
 
 function handleUpdate(router) {
   router.hasChanged = true;
@@ -90,7 +90,7 @@ var connect = require('connect'),
 
 if (config.verbose) { app.use(connect.logger('dev')); } // XXX
 
-server.listen(config.serverPort, config.serverAddress);
+server.listen(config.port, config.host);
 
 io.configure(function () {
   io.enable('browser client minification');
@@ -141,7 +141,7 @@ function timedUpdate() {
   if (m.update.length > 0) {
     io.sockets.volatile.json.send(m);
   }
-  setTimeout(timedUpdate, config.updateInterval);
+  setTimeout(timedUpdate, config.update);
 }
 
 timedUpdate();

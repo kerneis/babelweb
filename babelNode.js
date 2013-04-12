@@ -86,7 +86,7 @@
       /* Store the rest of Babel input, after the latest newline */
       var buffer = '';
 
-      client = net.connect({port: options.port, host: options.address},
+      client = net.connect({port: options.port, host: options.host},
           function () { console.log("Connected to Babel."); });
       client.setEncoding('ascii');
       client.setKeepAlive(true);
