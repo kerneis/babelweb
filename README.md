@@ -15,14 +15,13 @@ Browse http://localhost:8080/.
 Detailed instructions (from git repository or archive)
 ---------------------
 
-You'll need nodejs (>= 0.6.0) and npm (>=1.0).  If you don't have them
-installed yet, follow the [installation
-instructions](https://github.com/joyent/node/wiki/Installation) for your
+You'll need Node.js (>= 0.10.0) and npm (provided with nodejs).  If you have not
+installed them yet, [download Node.js](http://nodejs.org/download/) for your
 platform.
 
 Clone the repository if you haven't already, and cd into it:
 
-    git clone git://kerneis.info/babelweb
+    git clone git://git.wifi.pps.univ-paris-diderot.fr/babelweb.git
     cd babelweb
 
 You have then two options to install babelweb:
@@ -44,16 +43,35 @@ Then, start Babel on your local host:
 
     babeld -g 33123 ... &
 
-or create a tunnel if it is running on a remote host:
-
-    ssh -N -L[::1]:33123:[::1]:33123 username@babel.host
-
 And finally start babelweb:
 
     babelweb
 
 By default, the babelweb interface is located at:
 http://localhost:8080/
+
+
+Monitoring remote babel instances
+---------------------------------
+
+To monitor a remote babel instance (eg. running on a host called `remote`), you
+have two options.
+
+1. Create a tunnel from `remote` to `local` with ssh:
+
+        local$ ssh -N -L[::1]:33123:[::1]:33123 username@remote
+
+   and keep the default value for the option `routers`.
+
+2. Use `socat` as a proxy on `remote` to make the babel local interface
+   available from the outside:
+
+        remote$ socat TCP-LISTEN:1234,fork TCP6:[::1]:33123
+
+   and setup the option `routers` accordingly:
+   
+        local$ babelweb routers="remote:1234"
+
 
 Options
 -------
@@ -64,11 +82,11 @@ See the man page for a list of options (also available in the doc/ directory):
 
 You can specify options directly on the command-line:
 
-    sudo env PATH=$PATH babelweb serverPort=80 serverAddress=127.0.0.1 user=www-data
+    sudo env PATH=$PATH babelweb port=80 host=127.0.0.1
 
 Alternatively, you can manage babelweb options through npm:
 
-    npm config set babelweb:serverPort 80
+    npm config set babelweb:port 80
 
 In that case, you **must** start babelweb through npm too (and cannot use
 command-line options):
@@ -80,8 +98,8 @@ See `man npm-config` for more details.
 Security
 --------
  
-Babelweb works better when started as root, and will drop privileges as soon
-as possible.  See the man page for more details.
+Babelweb does not need to be started as root anymore; regular user privileges
+are recommended.
 
 Browser support
 ---------------
@@ -91,9 +109,8 @@ and SVG (to display the network graph).  If Adobe Flash is installed, it
 might be used to establish a more reliable connection (but websockets
 are prefered if your browser supports them).
 
-Babelweb has been tested and found to work with recent versions of Firefox
-(with some minor refreshing glitches), Chrome, Safari and Opera (except for
-some visual bells and whistles).
+Babelweb has been tested and found to work with recent versions of Firefox,
+Chrome, Safari and Opera (except for some visual bells and whistles).
 
 Please, do not hesitate to send reports of working and broken browsers.
 

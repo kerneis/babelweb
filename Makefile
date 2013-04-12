@@ -14,7 +14,6 @@ install:
 
 clean: uninstall
 	npm cache clean
-	rm -rf build .lock-wscript
 
 uninstall:
 	npm rm babelweb -g

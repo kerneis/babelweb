@@ -3,6 +3,14 @@ babelweb-changelog(1) -- Changes
 
 ## HISTORY
 
+### 0.3.0 (not released yet)
+* Support for monitoring multiple babel routers
+* INCOMPATIBLE CHANGE: command-line option renaming
+* Ignore duplicate changes to reduce network traffic
+* Set server-side process title to babelweb
+* Fix various bugs and glitches in client-side UI
+* Bump every dependency to latest version (Node.js, socket.io, D3.js)
+
 ### 0.2.4
 * Use the latest release of D3
 * Fix install dependencies for npm
