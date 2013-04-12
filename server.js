@@ -112,7 +112,10 @@ io.configure(function () {
 io.sockets.on('connection', function (client) {
   var states = [];
   routers.forEach(function (r) {
-    states.push(r.getState());
+    var s = r.getState();
+    if (s !== null) {
+      states.push(s);
+    }
   });
   if (states.length > 0) {
     client.json.send({"type":"update", "update":states});
@@ -126,7 +129,12 @@ function timedUpdate() {
   };
   routers.forEach(function (r) {
     if (r.hasChanged) {
-      m.update.push(r.getState());
+      var s = r.getState();
+      if (s === null) {
+        console.log("Router has changed but state is null!");
+      } else {
+        m.update.push(s);
+      }
       r.hasChanged = false;
     }
   });

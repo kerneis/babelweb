@@ -134,8 +134,14 @@
     }
     node.start = start;
 
+    /* Return the state of the node, or null if we don't have enough
+     * information */
     function getState() {
-      return state;
+      if(typeof state.self.id === "undefined") {
+        return null;
+      } else {
+        return state;
+      }
     }
     node.getState = getState;
 
