@@ -77,8 +77,13 @@ function babelweb() {
         }
         break;
       case "delete":
+        if(typeof babelState[message.id] === "undefined") {
+          return; /* we have missed the creation of this router */
+        }
         delete babelState[message.id];
-        setCurrent("unknown");
+        if (current === message.id) {
+          setCurrent("unknown");
+        }
         break;
     }
     /* Update list of monitored nodes */
