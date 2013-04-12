@@ -93,6 +93,14 @@ function babelweb() {
       .attr("value", function(d) { return d; })
       .text(function (d) { return babelState[d].self.name; });
     options.exit().remove();
+    /* Sort nodes alphabetically, except "none" which is on top */
+    d3.selectAll("#nodes option").sort(function (x, y) {
+      if(x === "unknown") {
+        return -1;
+      } else {
+        return babelState[x].self.name.localeCompare(babelState[y].self.name);
+      }
+    });
     /* Adjust the selected option in the dropdown list */
     var sel = document.getElementById("nodes");
     for(var i, j = 0; i = sel.options[j]; j++) {
