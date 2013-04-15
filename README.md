@@ -82,7 +82,7 @@ See the man page for a list of options (also available in the doc/ directory):
 
 You can specify options directly on the command-line:
 
-    sudo env PATH=$PATH babelweb port=80 host=127.0.0.1
+    babelweb port=80 host=127.0.0.1
 
 Alternatively, you can manage babelweb options through npm:
 
