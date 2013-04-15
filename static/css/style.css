@@ -34,3 +34,13 @@ p.legend span { float: left; display: block; }
 #neighbour td:nth-child(6) { text-align: right; }
 
 #xroute td:nth-child(2) { text-align: right; }
+
+tr:hover { opacity: 0.7; }
+tr {
+  background-color: white;
+  -webkit-transition: background-color 1s;
+  -moz-transition: background-color 1s;
+  -o-transition: background-color 1s;
+  -ms-transition: background-color 1s;
+  transition: background-color 1s;
+}

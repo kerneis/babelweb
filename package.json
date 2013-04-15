@@ -1,20 +1,20 @@
 {
   "name": "babelweb"
-, "version": "0.2.4"
+, "version": "0.3.0"
 , "description": "Web-based monitoring tool for the Babel routing protocol"
 , "homepage": "http://www.pps.univ-paris-diderot.fr/~kerneis/software/babelweb"
 , "keywords": [ "babel", "routing", "monitoring" ]
 , "author": "Gabriel Kerneis <kerneis@pps.univ-paris-diderot.fr> (http://www.pps.univ-paris-diderot.fr/~kerneis/)"
 , "repository":
   { "type": "git"
-  , "url": "git://kerneis.info/babelweb" }
+  , "url": "git://git.wifi.pps.univ-paris-diderot.fr/babelweb.git" }
 , "scripts" : {"start": "./bin/babelweb"}
 , "dependencies":
-  { "socket.io": "0.7.x"
-  , "connect": "1.7.x" }
+  { "socket.io": "0.9.x"
+  , "connect": "2.7.x" }
 , "devDependencies" :
-  { "ronn" : "0.3.x" }
-, "engines": { "node": "0.6.x" }
+  { "ronn" : "0.4.x" }
+, "engines": { "node": "0.10.x" }
 , "directories" :
   { "doc" : "./doc"
   , "man" : "./man1"
@@ -23,10 +23,10 @@
 , "preferGlobal": true
 , "licenses" :
   [ { "type" : "MIT"
-    , "url" : "http://github.com/kerneis/babelweb/raw/master/LICENSE"
+    , "url" : "http://git.wifi.pps.univ-paris-diderot.fr/?p=babelweb.git;a=blob_plain;f=LICENSE"
     }
   , { "type" : "3-clause BSD"
-    , "url" : "http://github.com/kerneis/babelweb/raw/master/LICENSE.d3"
+    , "url" : "http://git.wifi.pps.univ-paris-diderot.fr/?p=babelweb.git;a=blob_plain;f=LICENSE.d3"
     }
   ]
 }

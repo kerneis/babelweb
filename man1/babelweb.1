@@ -1,7 +1,7 @@
-.\" Generated with Ronnjs/v0.1
-.\" http://github.com/kapouer/ronnjs/
+.\" Generated with Ronnjs 0.4.0
+.\" http://github.com/kapouer/ronnjs
 .
-.TH "BABELWEB" "1" "August 2011" "" ""
+.TH "BABELWEB" "1" "April 2013" "" ""
 .
 .SH "NAME"
 \fBbabelweb\fR \-\- monitoring tool for babel
@@ -22,52 +22,40 @@ option of \fBbabeld\fR)\.
 Options are a list of \fBkey=value\fR pairs\.
 .
 .IP "\(bu" 4
-\fBserverAddress\fR:
+\fBhost\fR:
 local webserver address (default: \fB::\fR)\.
 .
 .IP "\(bu" 4
-\fBserverPort\fR:
+\fBport\fR:
 local webserver port (default: \fB8080\fR)\.
 .
 .IP "\(bu" 4
-\fBbabelAddress\fR:
-address of the local interface \fBbabeld\fR is listening on (default: \fB::1\fR)\.
+\fBrouters\fR:
+comma\-separated list of addresses and ports, specifying the local interfaces \fBbabeld\fR is listening on (default: \fB[::1]:33123\fR)\.
 .
 .IP "\(bu" 4
-\fBbabelPort\fR:
-port of the local interface \fBbabeld\fR is listening on (default: \fB33123\fR)\.
-.
-.IP "\(bu" 4
-\fBupdateIval\fR:
+\fBupdate\fR:
 time between updates to the browser, in milliseconds (default: \fB3000\fR)\.
 .
 .IP "\(bu" 4
 \fBverbose\fR:
 (very) verbose output (default: \fBfalse\fR)\.
 .
-.IP "\(bu" 4
-\fBuser\fR:
-drop privileges to this user if started as root (default: \fB\fR)\.
-.
 .IP "" 0
 .
 .SH "SECURITY"
-Running as root is not mandatory but recommended to enable the Flash policy
-server used by socket\.io (on port 843 \-\-\- open your firewall!)\.  Babelweb
-drops privileges as soon as the server is started, and refuses to continue if
-dropping privileges fails\.  Use the "user" option to choose which user to drop
-privileges to\.
+Running as root is not necessary, and not recommended anymore\.
 .
 .SH "SIGNALS"
 Babelweb reacts to the SIGUSR1 and SIGUSR2 signals:
 .
 .IP "\(bu" 4
 SIGUSR1:
-dump the topology as seen by babelweb (json format)\.
+dump the topology of each router as seen by babelweb (json format)\.
 .
 .IP "\(bu" 4
 SIGUSR2:
-restart connection to \fBbabeld\fR\|\.
+restart connections to \fBbabeld\fR\|\.
 .
 .IP "" 0
 .
@@ -80,7 +68,7 @@ web: \fIhttp://github\.com/kerneis/babelweb/issues\fR
 .IP "\(bu" 4
 email:
 Babel users mailing\-list \fIbabel\-users@lists\.alioth\.debian\.org\fR
-Gabriel Kerneis \fIgabriel@kerneis\.info\fR
+Gabriel Kerneis \fIkerneis@pps\.univ\-paris\-diderot\.fr\fR
 .
 .IP "" 0
 .

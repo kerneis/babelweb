@@ -1,7 +1,7 @@
-The files in static/js/d3 are taken from d3-2.1.1 and distributed under the
-following license:
+The files static/js/d3.v3.js and static/js/d3.v3.min.js are from d3-1.3.5 and
+distributed under the following license:
 
-Copyright (c) 2010, Michael Bostock
+Copyright (c) 2013, Michael Bostock
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

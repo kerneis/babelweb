@@ -1,4 +1,2 @@
 node_modules/
-build/
-.lock-wscript
 npm-debug.log

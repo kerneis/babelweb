@@ -3,9 +3,17 @@
 <html>
 <head>
     <title>BabelWeb</title>
-    <script type="text/javascript" src="/js/d3.v2.min.js"></script>
+    <script type="text/javascript" src="/js/d3.v3.min.js"></script>
     <link type="text/css" rel="stylesheet" href="/css/style.css">
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/js/babelweb.js"></script>
+    <script type="text/javascript">
+    window.onload = function() {
+      babel = babelweb();
+      babel.init();
+      babel.connect('');
+    }
+    </script>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -18,20 +26,25 @@
       <div id="fig">
       <p class="legend">
       <span class="legend-title">Legend</span>
-      <span class="legend-me">Me</span>
+      <span class="legend-current">Current</span>
       <span class="legend-neighbour">Neighbours</span>
       <span class="legend-other">Others</span>
       </p>
       </div>
     <h3>Configuration</h3>
     <p>
-    <input type="checkbox" id="show_all" checked = "checked" onClick="redisplay();" >
+    <label for="nodes">Current node:</label>
+    <select id="nodes"
+      onChange="babel.setCurrent(this.options[this.selectedIndex].value);">
+      <option value="unknown" selected>none</option>
+    </select><br>
+    <input type="checkbox" id="show_all" checked onClick="babel.redisplay();" >
     <label for="show_all">Show uninstalled routes</label><br>
-    <input type="checkbox" id="logscale" checked = "checked" onClick="redisplay();" >
+    <input type="checkbox" id="logscale" checked onClick="babel.redisplay();" >
     <label for="logscale">Logarithmic scale</label><br>
-    <input type="button" value="Randomize" onClick="randomizeNodes();" >
-    <input type="button" value="Zoom in" onClick="zoomIn(1.5);" >
-    <input type="button" value="Zoom out" onClick="zoomOut(1.5);" >
+    <input type="button" value="Randomize" onClick="babel.randomizeNodes();" >
+    <input type="button" value="Zoom in" onClick="babel.zoomIn(1.5);" >
+    <input type="button" value="Zoom out" onClick="babel.zoomOut(1.5);" >
     </p>
     <p>Updates : <span id="updates">0</span>.
        State: <span id="state" class="bad">disconnected</span>.</p>
@@ -102,7 +115,7 @@
     </tbody>
 </table>
 <h2>How to get BabelWeb?</h2>
-<pre>  git clone git://kerneis.info/babelweb</pre>
+<pre>  git clone <a href="http://git.wifi.pps.univ-paris-diderot.fr/?p=babelweb.git;a=summary">git://git.wifi.pps.univ-paris-diderot.fr/babelweb.git</a></pre>
 <p>There is also a <a href="http://github.com/kerneis/babelweb">github mirror</a>.
 </p>
 
@@ -114,6 +127,5 @@ It is inspired by BabelTool, a Java software by <a
     href="http://www.pps.univ-paris-diderot.fr/~pejman">Pejman Attar</a> and Alexis
 Roso.  Many thanks to Didier Gillet who coined the name.
 </p>
-<script type="text/javascript" src="/js/babelweb.js"></script>
   </body>
 </html>

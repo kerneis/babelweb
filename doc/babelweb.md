@@ -15,37 +15,30 @@ option of `babeld`).
 
 Options are a list of `key=value` pairs.
 
-* `serverAddress`:
+* `host`:
    local webserver address (default: `::`).
-* `serverPort`:
+* `port`:
    local webserver port (default: `8080`).
-* `babelAddress`:
-   address of the local interface `babeld` is listening on (default: `::1`).
-* `babelPort`:
-   port of the local interface `babeld` is listening on (default: `33123`).
-* `updateIval`:
+* `routers`:
+   comma-separated list of addresses and ports, specifying the local interfaces
+   `babeld` is listening on (default: `[::1]:33123`).
+* `update`:
    time between updates to the browser, in milliseconds (default: `3000`).
 * `verbose`:
    (very) verbose output (default: `false`).
-* `user`:
-   drop privileges to this user if started as root (default: ``).
 
 ## SECURITY
  
-Running as root is not mandatory but recommended to enable the Flash policy
-server used by socket.io (on port 843 --- open your firewall!).  Babelweb
-drops privileges as soon as the server is started, and refuses to continue if
-dropping privileges fails.  Use the "user" option to choose which user to drop
-privileges to.
+Running as root is not necessary, and not recommended anymore.
 
 ## SIGNALS
 
 Babelweb reacts to the SIGUSR1 and SIGUSR2 signals:
 
 * SIGUSR1:
-  dump the topology as seen by babelweb (json format).
+  dump the topology of each router as seen by babelweb (json format).
 * SIGUSR2:
-  restart connection to `babeld`.
+  restart connections to `babeld`.
 
 ## BUGS
 
@@ -55,7 +48,7 @@ When you find issues, please report them:
   <http://github.com/kerneis/babelweb/issues>
 * email:
   Babel users mailing-list <babel-users@lists.alioth.debian.org>
-  Gabriel Kerneis <gabriel@kerneis.info>
+  Gabriel Kerneis <kerneis@pps.univ-paris-diderot.fr>
 
 If possible, try to reproduce the bug with the `verbose=true` option and
 include the output in your report.
