@@ -48,7 +48,7 @@ When you find issues, please report them:
   <http://github.com/kerneis/babelweb/issues>
 * email:
   Babel users mailing-list <babel-users@lists.alioth.debian.org>
-  Gabriel Kerneis <gabriel@kerneis.info>
+  Gabriel Kerneis <kerneis@pps.univ-paris-diderot.fr>
 
 If possible, try to reproduce the bug with the `verbose=true` option and
 include the output in your report.

@@ -3,9 +3,10 @@ babelweb-changelog(1) -- Changes
 
 ## HISTORY
 
-### 0.3.0 (not released yet)
-* Support for monitoring multiple babel routers
+### 0.3.0
 * INCOMPATIBLE CHANGE: command-line option renaming
+* IMPORTANT CHANGE: do not require root, do not drop privileges
+* Support for monitoring multiple babel routers
 * Ignore duplicate changes to reduce network traffic
 * Set server-side process title to babelweb
 * Fix various bugs and glitches in client-side UI

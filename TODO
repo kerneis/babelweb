@@ -1,4 +1,3 @@
-* put route on top of the graph when highlighted
 * warn if txcost > 2*rxcost?
-* zoom with mouse wheel: too complicated (wait for next d3 release?)
+* zoom with mouse wheel
 * resize graph automatically with window size
