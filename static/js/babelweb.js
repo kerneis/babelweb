@@ -11,6 +11,7 @@ function babelweb() {
      routes are displayed on the graph too, but their metrics do not influence
      the layout. */
   var nodes = [], metrics = [], routes = [];
+  var routerIdToName = {}; /* Statically configure some names for router-ids */
 
   /* Colors */
   var palette = {
@@ -464,11 +465,10 @@ function babelweb() {
   }
 
   function nodeName(id) {
-   if (typeof babelState[id] === "undefined") {
-      return "unknown";
-   } else {
-      return babelState[id].self.name;
-   }
+    return routerIdToName[id] || babelState[id].self.name || "unknown";
+  }
+  function setHostnames(map) {
+    routerIdToName = map;
   }
 
   function init() {
@@ -505,5 +505,6 @@ function babelweb() {
   babelweb.zoomIn = zoomIn;
   babelweb.redisplay = redisplay;
   babelweb.setCurrent = setCurrent;
+  babelweb.setHostnames = setHostnames;
   return babelweb;
 }

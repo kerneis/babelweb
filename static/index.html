@@ -11,6 +11,13 @@
     window.onload = function() {
       babel = babelweb();
       babel.init();
+      /* To setup some static hostnames for your router ids, use
+         setHostnames:
+      babel.setHostnames({
+          "01:23:45:67:89:ab:cd:ef" : "foo",
+          "01:23:45:67:de:ad:be:ef" : "bar"
+          });
+      */
       babel.connect('');
     }
     </script>
