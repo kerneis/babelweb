@@ -465,7 +465,11 @@ function babelweb() {
   }
 
   function nodeName(id) {
-    return routerIdToName[id] || babelState[id].self.name || "unknown";
+    var name =
+      routerIdToName[id] ||
+      (babelState[id] && babelState[id].self.name) ||
+      "unknown";
+    return name;
   }
   function setHostnames(map) {
     routerIdToName = map;
