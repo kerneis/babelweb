@@ -3,6 +3,11 @@ babelweb-changelog(1) -- Changes
 
 ## HISTORY
 
+### 0.4.0 (unreleased)
+* Display rtt field (thanks to Baptiste Jonglez)
+* Improve server-side log messages
+* Configure static hostnames (via js/site-local.js)
+
 ### 0.3.0
 * INCOMPATIBLE CHANGE: command-line option renaming
 * IMPORTANT CHANGE: do not require root, do not drop privileges
