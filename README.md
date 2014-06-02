@@ -114,4 +114,4 @@ Chrome, Safari and Opera (except for some visual bells and whistles).
 
 Please, do not hesitate to send reports of working and broken browsers.
 
-Gabriel Kerneis <kerneis@pps.univ-paris-diderot.fr>
+Gabriel Kerneis <gabriel@kerneis.info>
