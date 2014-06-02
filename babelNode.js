@@ -9,6 +9,7 @@
       state,
       client,
       updated,
+      connectionFailure = false, /* Avoid spamming log with repeated failures */
       updateCallback = function () { return; },
       closeCallback = function () { return; };
 
@@ -20,7 +21,7 @@
         /* self is special: it contains no key */
         if (tokens[1] === "self") {
           if (typeof state.self.name !== "undefined") {
-            console.error("Duplicate self");
+            log("error", "Duplicate self");
             return false;
           }
           state.self = { name: tokens[2], id: tokens[4] };
@@ -31,7 +32,7 @@
         if (typeof state[tokens[1]][tokens[2]] === "undefined") {
           state[tokens[1]][tokens[2]] = {};
         } else {
-          console.error("Adding a known " + tokens[1] + ": " + tokens[2]);
+          log("error", "Adding a known " + tokens[1] + ": " + tokens[2]);
           return false;
         }
         for (i = 3; i < tokens.length; i += 2) {
@@ -41,7 +42,7 @@
         break;
       case 'change':
         if (typeof state[tokens[1]][tokens[2]] === "undefined") {
-          console.error("Changing a missing " + tokens[1] + ": " + tokens[2]);
+          log("error", "Changing a missing " + tokens[1] + ": " + tokens[2]);
           return false;
         }
         for (i = 3; i < tokens.length; i += 2) {
@@ -54,7 +55,7 @@
         break;
       case 'flush':
         if (typeof state[tokens[1]][tokens[2]] === "undefined") {
-          console.error("Flushing a missing " + tokens[1] + ": " + tokens[2]);
+          log("error", "Flushing a missing " + tokens[1] + ": " + tokens[2]);
           state[tokens[1]][tokens[2]] = {};
         } else {
           delete state[tokens[1]][tokens[2]];
@@ -63,13 +64,13 @@
         break;
       case 'BABEL':
         if (tokens[1] !== '0.0') {
-          console.error('Unknown protocol version: ' + tokens[1]);
+          log("error", 'Unknown protocol version: ' + tokens[1]);
           process.exit(1);
         }
         break;
        case 'done': break;
       default:
-        console.error('Ignoring unknown token: ' + tokens[0]);
+        log("error", 'Ignoring unknown token: ' + tokens[0]);
       }
       return true;
     }
@@ -87,7 +88,10 @@
       var buffer = '';
 
       client = net.connect({port: options.port, host: options.host},
-          function () { console.log("Connected to Babel."); });
+          function () {
+            connectionFailure = false;
+            log("normal", "Connected to Babel.");
+          });
       client.setEncoding('ascii');
       client.setKeepAlive(true);
 
@@ -96,8 +100,8 @@
         buffer = lines.pop();
         for (i = 0; i < lines.length; i = i + 1) {
           if (!parseBabel(lines[i])) {
-            console.error("Parse error: reconnecting.");
-            console.error(JSON.stringify(state));
+            log("error", "Parse error: reconnecting.");
+            log("error", JSON.stringify(state));
             /* This will trigger a 'close' event, which reconnects */
             client.destroy();
             return;
@@ -113,15 +117,30 @@
           closeCallback(node, state.self.id);
         }
         if (error) { return; /* already handled */ }
-        console.error("Babel socket close: reconnecting in 1 second.");
+        if(!connectionFailure) {
+          log("error", "Babel socket close: reconnecting in 1 second.");
+        }
+        connectionFailure = true;
         setTimeout(babelConnect, 1000);
       });
 
       client.on('error', function () {
-        console.error("Babel socket error: reconnecting in 1 second.");
+        if(!connectionFailure) {
+          log("error", "Babel socket close: reconnecting in 1 second.");
+        }
+        connectionFailure = true;
         setTimeout(babelConnect, 1000);
       });
 
+    }
+
+    function log(type, msg) {
+      var logmsg = "[" + options.host + "]:" + options.port + " - " + msg;
+      if(type === "error") {
+        console.error(logmsg);
+      } else {
+        console.log(logmsg);
+      }
     }
 
     function start() {

@@ -27,6 +27,12 @@ Options are a list of `key=value` pairs.
 * `verbose`:
    (very) verbose output (default: `false`).
 
+## Client-side configuration
+
+Configuration of the web interface, such as the correspondance between
+hostnames and router-ids, is done in the file `js/site-local.js`.  See
+`js/site-local.js.sample` for a sample configuration.
+
 ## SECURITY
  
 Running as root is not necessary, and not recommended anymore.

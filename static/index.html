@@ -8,12 +8,13 @@
     <script type="text/javascript" src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="/js/babelweb.js"></script>
     <script type="text/javascript">
+    babel = babelweb();
     window.onload = function() {
-      babel = babelweb();
       babel.init();
       babel.connect('');
     }
     </script>
+    <script type="text/javascript" src="/js/site-local.js"></script>
 
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
     <meta http-equiv="Content-Script-Type" content="text/javascript">
@@ -58,6 +59,7 @@
     <th>rxcost</th>
     <th>txcost</th>
     <th>cost</th>
+    <th>rtt</th>
     </tr>
     </thead>
     <tbody>
