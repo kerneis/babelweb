@@ -1,7 +1,7 @@
-.\" Generated with Ronnjs 0.4.0
-.\" http://github.com/kapouer/ronnjs
+.\" Generated with Ronnjs 0.3.8
+.\" http://github.com/kapouer/ronnjs/
 .
-.TH "BABELWEB" "1" "April 2013" "" ""
+.TH "BABELWEB" "1" "June 2014" "" ""
 .
 .SH "NAME"
 \fBbabelweb\fR \-\- monitoring tool for babel
@@ -42,6 +42,10 @@ time between updates to the browser, in milliseconds (default: \fB3000\fR)\.
 (very) verbose output (default: \fBfalse\fR)\.
 .
 .IP "" 0
+.
+.SH "Client\-side configuration"
+Configuration of the web interface, such as the correspondance between
+hostnames and router\-ids, is done in the file \fBjs/site\-local\.js\fR\|\.  See \fBjs/site\-local\.js\.sample\fR for a sample configuration\.
 .
 .SH "SECURITY"
 Running as root is not necessary, and not recommended anymore\.

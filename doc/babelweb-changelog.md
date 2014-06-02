@@ -3,7 +3,7 @@ babelweb-changelog(1) -- Changes
 
 ## HISTORY
 
-### 0.4.0 (unreleased)
+### 0.4.0
 * Display rtt field (thanks to Baptiste Jonglez)
 * Improve server-side log messages
 * Configure static hostnames (via js/site-local.js)
