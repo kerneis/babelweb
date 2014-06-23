@@ -27,6 +27,7 @@ var config = {
     "host" : "::",
     "port" : "8080",
     "routers" : "[::1]:33123",
+    "babel_port" : 33123,
     "update" : "1000",
     "verbose": false
   };
@@ -58,6 +59,8 @@ var url = require('url');
 var routers =
   config.routers.split(',').map(function(r) {
     var u = url.parse("ip:" + r);
+    if(u.port == null)
+      u.port = config.babel_port;
     return babelNode.connect({port: u.port, host: u.hostname});
   });
 
