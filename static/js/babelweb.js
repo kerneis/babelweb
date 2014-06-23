@@ -412,6 +412,30 @@ function babelweb() {
     }
   };
 
+  /* Returns the list of prefixes originated by a given router.  Note that
+   * we might not see all prefixes announced by the router, as they might
+   * be filtered before reaching us. */
+  function originated_prefixes(router_id) {
+    originated = [];
+    if (router_id == current) {
+      /* Return all redistributed prefixes. */
+      for (var xr_key in babelState[current].xroute) {
+        var xr = babelState[current].xroute[xr_key];
+        originated.push(xr.prefix);
+      }
+    }
+    else {
+      for (var r_key in babelState[current].route) {
+        var r = babelState[current].route[r_key];
+        if (r.id == router_id)
+          insertKey(originated, {key: r.prefix});
+      }
+      originated = originated.map(function(x){ return x.key; });
+    }
+
+    return originated;
+  }
+
   function redisplay() {
 
     var scale = d3.select("#logscale").property("checked") ?
@@ -443,12 +467,13 @@ function babelweb() {
 
     /* update metric and name in node title */
     vis.selectAll("circle.node").each(function(d) {
+      originated = originated_prefixes(d.nodeId);
       d3.select(this).select("title")
       .text(
           nodeName(d.nodeId)
         + " ["+d.nodeId+"]"
-        + " (metric: "+d.metric+")");
-
+        + " (metric: "+d.metric+")"
+        + "\n" + originated.join("\n"));
     });
 
     /* Display routes */
