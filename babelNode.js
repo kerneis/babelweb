@@ -116,7 +116,6 @@
         if(typeof state.self.id !== "undefined") {
           closeCallback(node, state.self.id);
         }
-        if (error) { return; /* already handled */ }
         if(!connectionFailure) {
           log("error", "Babel socket close: reconnecting in 1 second.");
         }
@@ -125,11 +124,10 @@
       });
 
       client.on('error', function () {
-        if(!connectionFailure) {
-          log("error", "Babel socket close: reconnecting in 1 second.");
-        }
-        connectionFailure = true;
-        setTimeout(babelConnect, 1000);
+        /* Do nothing, 'close' will be called in any case.
+         * http://nodejs.org/api/net.html#net_event_error_1
+         */
+        return;
       });
 
     }
