@@ -478,7 +478,7 @@ function babelweb() {
   function init() {
     initLegend();
     initGraph();
-    setZoomLevel(450, 400);
+    setZoomLevel(675, 600);
   }
 
   function setCurrent(id) {
